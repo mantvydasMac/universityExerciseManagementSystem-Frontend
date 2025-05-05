@@ -1,0 +1,42 @@
+.group-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.group-page__main {
+    flex: 1;
+    padding: 1rem 0;
+    background: #f9f9f9;
+}
+
+.fab-container {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    z-index: 1001;
+}
+
+.fab {
+    width: 3.5rem;
+    height: 3.5rem;
+    border: none;
+    border-radius: 50%;
+    background-color: #282c34;
+    color: #fff;
+    font-size: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    padding-bottom: 0.25rem;
+}
+
+.fab:hover {
+    background-color: #252a34;
+}
