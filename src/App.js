@@ -1,9 +1,18 @@
 import React from 'react';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
 import GroupPage from './pages/GroupPage';
+import TaskPage from './pages/TaskPage';
 
 function App() {
-    return <GroupPage />;
+    return (
+        <Router>
+            <Routes>
+                <Route path="/" element={<GroupPage />} />
+                <Route path="/groups/:groupId/tasks" element={<TaskPage />} />
+            </Routes>
+        </Router>
+    );
 }
 
 export default App;

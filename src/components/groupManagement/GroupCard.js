@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import OverflowMenu from '../../components/essentials/OverflowMenu';
 import './styles/GroupDashboard.css';
 
@@ -7,8 +8,7 @@ export default function GroupCard({ group, isMenuOpen, toggleMenu, closeMenu }) 
     const [isOverflowing, setIsOverflowing] = useState(false);
     const [slideDistance, setSlideDistance] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
-
-    const CONSTANT_SPEED = 100;
+    const navigate = useNavigate();
 
     useEffect(() => {
         const nameEl = nameRef.current;
@@ -22,28 +22,30 @@ export default function GroupCard({ group, isMenuOpen, toggleMenu, closeMenu }) 
     }, [group.name]);
 
     const handleMouseEnter = () => {
-        if (isOverflowing) {
-            setIsHovered(true);
-        }
+        if (isOverflowing) setIsHovered(true);
+    };
+    const handleMouseLeave = () => setIsHovered(false);
+
+    const handleCardClick = e => {
+        e.stopPropagation();
+        navigate(`/groups/${group.id}/tasks`);
     };
 
-    const handleMouseLeave = () => {
-        setIsHovered(false);
-    };
-
-    const hoverDuration = isOverflowing ? slideDistance / CONSTANT_SPEED : 0;
-
-    const defaultDuration = 0.2;
-
+    const hoverDuration = isOverflowing ? slideDistance / 100 : 0.2;
     const transformStyle = {
-        transform: isHovered && isOverflowing ? `translateX(-${slideDistance}px)` : 'translateX(0)',
-        transition: `transform ${isHovered ? hoverDuration : defaultDuration}s linear`,
-        maskImage: isHovered && isOverflowing ? 'none' : undefined,
-        WebkitMaskImage: isHovered && isOverflowing ? 'none' : undefined,
+        transform: isHovered
+            ? `translateX(-${slideDistance}px)`
+            : 'translateX(0)',
+        transition: `transform ${hoverDuration}s linear`,
+        maskImage: isHovered ? 'none' : undefined,
+        WebkitMaskImage: isHovered ? 'none' : undefined,
     };
 
     return (
-        <div className="group-card" onClick={e => e.stopPropagation()}>
+        <div
+            className="group-card"
+            onClick={handleCardClick}
+        >
             <div className="group-card__icon">🎓</div>
             <div className="group-card__header">
                 <div
@@ -59,13 +61,15 @@ export default function GroupCard({ group, isMenuOpen, toggleMenu, closeMenu }) 
                         {group.name}
                     </div>
                 </div>
+
                 <button
                     className="overflow-menu-button"
-                    onClick={() => toggleMenu(group.id)}
+                    onClick={e => { e.stopPropagation(); toggleMenu(group.id); }}
                     aria-label="Group actions"
                 >
                     ⋮
                 </button>
+
                 <OverflowMenu
                     open={isMenuOpen === group.id}
                     items={[
