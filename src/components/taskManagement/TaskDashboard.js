@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import TaskCard from './TaskCard';
 import './styles/TaskDashboard.css';
 
-export default function TaskDashboard({ tasks }) {
+export default function TaskDashboard({ tasks, onEdit }) {
     const [taskList, setTaskList] = useState(tasks);
 
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
 
     const handleDragOver = e => {
         e.preventDefault();
@@ -61,7 +62,7 @@ export default function TaskDashboard({ tasks }) {
                     >
                         <h3 className="task-dashboard__column-header">{col.title}</h3>
                         {col.items.map(task => (
-                            <TaskCard key={task.id} task={task} />
+                            <TaskCard key={task.id} task={task} onEdit={onEdit} />
                         ))}
                         {col.items.length === 0 && (
                             <p className="task-dashboard__empty">No tasks here</p>

@@ -13,7 +13,6 @@
     z-index: 100;
 }
 
-/* when placement="top", flip to sit above the trigger */
 .overflow-menu--top {
     top: auto;
     bottom: 100%;

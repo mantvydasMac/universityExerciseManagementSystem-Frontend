@@ -3,6 +3,7 @@ import Header from '../components/essentials/Header';
 import GroupDashboard from '../components/groupManagement/GroupDashboard';
 import CreateGroupModal from '../components/groupManagement/CreateGroupModal';
 import OverflowMenu from '../components/essentials/OverflowMenu';
+import FloatingActionButton from '../components/essentials/FloatingActionButton';
 import initialGroups from './fillerData/Groups.js';
 import './styles/GroupPage.css';
 
@@ -15,6 +16,7 @@ export default function GroupPage() {
         e.stopPropagation();
         setFabOpen(o => !o);
     };
+
     const closeFabMenu = () => setFabOpen(false);
 
     const handleCreateClick = () => {
@@ -45,9 +47,11 @@ export default function GroupPage() {
                     ]}
                 />
 
-                <button className="fab" aria-label="Add group" onClick={toggleFabMenu}>
-                    +
-                </button>
+                <FloatingActionButton
+                    ariaLabel="Add group"
+                    icon="+"
+                    onClick={toggleFabMenu}
+                />
             </div>
 
             <CreateGroupModal

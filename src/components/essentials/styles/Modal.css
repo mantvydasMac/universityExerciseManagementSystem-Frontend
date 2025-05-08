@@ -56,6 +56,14 @@
     margin-bottom: 1rem;
 }
 
+.modal-body textarea {
+    resize: none;
+}
+
+.modal-body select {
+    width: 100%;
+}
+
 .modal-footer {
     padding: 0.75rem 1rem;
     border-top: 1px solid #e0e0e0;
