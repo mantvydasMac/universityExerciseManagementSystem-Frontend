@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Header from '../components/essentials/Header';
 import TaskDashboard from '../components/taskManagement/TaskDashboard';
-import CreateTaskModal from '../components/taskManagement/CreateTaskModal';
-import EditTaskModal from '../components/taskManagement/EditTaskModal';
+import TaskModal from '../components/taskManagement/TaskModal';
 import FloatingActionButton from '../components/essentials/FloatingActionButton';
 import initialGroups from './fillerData/Groups';
 import initialTasks from './fillerData/Tasks';
@@ -15,47 +14,51 @@ export default function TaskPage() {
     const title = group ? `${group.name} tasks:` : 'Tasks:';
 
     const [tasks, setTasks] = useState(initialTasks);
-    const [showCreateModal, setShowCreateModal] = useState(false);
-    const [showEditModal, setShowEditModal] = useState(false);
+    const [showModal, setShowModal] = useState(false);
     const [currentTask, setCurrentTask] = useState(null);
+    const [modalMode, setModalMode] = useState('create');
 
     const handleAddTaskClick = e => {
         e.stopPropagation();
-        setShowCreateModal(true);
-    };
-    const handleCloseCreate = () => setShowCreateModal(false);
-    const handleCreateTask = newTask => {
-        const nextId = tasks.length
-            ? Math.max(...tasks.map(t => t.id)) + 1
-            : 1;
-        setTasks(prev => [...prev, { id: nextId, ...newTask }]);
-        setShowCreateModal(false);
+        setModalMode('create');
+        setCurrentTask(null);
+        setShowModal(true);
     };
 
     const handleEditTask = task => {
         setCurrentTask(task);
-        setShowEditModal(true);
-    };
-    const handleCloseEdit = () => {
-        setShowEditModal(false);
-        setCurrentTask(null);
-    };
-    const handleSaveTask = updated => {
-        setTasks(prev =>
-            prev.map(t => (t.id === updated.id ? updated : t))
-        );
-        handleCloseEdit();
+        setModalMode('edit');
+        setShowModal(true);
     };
 
-    // extract unique "assignedTo" names for selectors
+    const handleCloseModal = () => {
+        setShowModal(false);
+        if (modalMode === 'edit') {
+            setCurrentTask(null);
+        }
+    };
+
+    const handleSubmitTask = taskData => {
+        if (modalMode === 'edit') {
+            setTasks(prev =>
+                prev.map(t => (t.id === taskData.id ? taskData : t))
+            );
+        } else {
+            const nextId = tasks.length
+                ? Math.max(...tasks.map(t => t.id)) + 1
+                : 1;
+            setTasks(prev => [...prev, { id: nextId, ...taskData }]);
+        }
+        setShowModal(false);
+    };
+
     const memberNames = Array.from(
         new Set(tasks.map(t => t.assignedTo).filter(Boolean))
     );
 
     return (
         <div className="task-page" onClick={() => {
-            if (showCreateModal) handleCloseCreate();
-            if (showEditModal) handleCloseEdit();
+            if (showModal) handleCloseModal();
         }}>
             <Header title={title} />
 
@@ -74,19 +77,13 @@ export default function TaskPage() {
                 />
             </div>
 
-            <CreateTaskModal
-                show={showCreateModal}
-                onClose={handleCloseCreate}
-                onCreate={handleCreateTask}
-                members={memberNames}
-            />
-
-            <EditTaskModal
-                show={showEditModal}
-                onClose={handleCloseEdit}
-                onSave={handleSaveTask}
+            <TaskModal
+                show={showModal}
+                onClose={handleCloseModal}
+                onSubmit={handleSubmitTask}
                 task={currentTask}
                 members={memberNames}
+                mode={modalMode}
             />
         </div>
     );
