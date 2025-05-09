@@ -1,0 +1,29 @@
+.task-dashboard {
+    padding: 0 2rem 0 2rem;
+}
+.task-dashboard__columns {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+.task-dashboard__column {
+    background: #f9f9f9;
+    border-radius: 6px;
+}
+.task-dashboard__column-header {
+    margin: 0 0 0.5rem;
+    font-size: 1.1rem;
+    text-align: center;
+    color: #333;
+}
+.task-dashboard__empty {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+}
+
+@media screen and (max-width: 600px) {
+    .task-dashboard__columns {
+        grid-template-columns: 1fr;
+    }
+}
