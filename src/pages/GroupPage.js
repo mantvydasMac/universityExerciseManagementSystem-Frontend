@@ -14,6 +14,8 @@ export default function GroupPage() {
     const [fabOpen, setFabOpen] = useState(false);
     const [showCreateModal, setShowCreateModal] = useState(false);
 
+    const currentUserId = 1; // TODO: Replace with actual user ID from authentication system
+
     useEffect(() => {
         fetchGroups();
     }, []);
@@ -21,8 +23,7 @@ export default function GroupPage() {
     const fetchGroups = async () => {
         try {
             setLoading(true);
-            const userId = 1; // Replace with actual user ID from your auth system
-            const fetchedGroups = await groupAPI.getUserGroups(userId);
+            const fetchedGroups = await groupAPI.getUserGroups(currentUserId);
             setGroups(fetchedGroups);
             setError(null);
         } catch (err) {
@@ -32,7 +33,6 @@ export default function GroupPage() {
             setLoading(false);
         }
     };
-
 
     const toggleFabMenu = e => {
         e.stopPropagation();
@@ -46,9 +46,17 @@ export default function GroupPage() {
         setFabOpen(false);
     };
 
-    const handleCreateGroup = name => {
-        const nextId = Math.max(...groups.map(g => g.id)) + 1;
-        setGroups([...groups, { id: nextId, name }]);
+    const handleCreateGroup = async (name) => {
+        try {
+            setLoading(true);
+            const newGroup = await groupAPI.createGroup(name, currentUserId);
+            setGroups(prevGroups => [...prevGroups, newGroup]);
+            setShowCreateModal(false);
+        } catch (err) {
+            console.error('Error creating group:', err);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (

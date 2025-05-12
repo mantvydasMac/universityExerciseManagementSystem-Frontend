@@ -3,30 +3,32 @@ import Modal from '../essentials/Modal';
 
 export default function CreateGroupModal({ show, onClose, onCreate }) {
     const [groupName, setGroupName] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        if (show) setGroupName('');
+        if (show) {
+            setGroupName('');
+            setIsSubmitting(false);
+            setError(null);
+        }
     }, [show]);
 
-    const handleSubmit = e => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const name = groupName.trim();
-        if (name) {
-            onCreate(name);
-            onClose();
+        if (name && !isSubmitting) {
+            setIsSubmitting(true);
+            setError(null);
+            try {
+                await onCreate(name);
+                onClose();
+            } catch (error) {
+            } finally {
+                setIsSubmitting(false);
+            }
         }
     };
-
-    const footer = (
-        <>
-            <button type="button" className="modal-button modal-button--cancel" onClick={onClose}>
-                Cancel
-            </button>
-            <button type="submit" className="modal-button modal-button--confirm">
-                Create
-            </button>
-        </>
-    );
 
     return (
         <Modal
@@ -34,19 +36,39 @@ export default function CreateGroupModal({ show, onClose, onCreate }) {
             onClose={onClose}
             title="Create New Group"
             ariaLabelledBy="create-group-title"
-            footer={footer}
         >
-            <form onSubmit={handleSubmit}>
-                <label htmlFor="group-name">Group Name</label>
-                <input
-                    id="group-name"
-                    type="text"
-                    value={groupName}
-                    onChange={e => setGroupName(e.target.value)}
-                    placeholder="e.g. CHEM-707"
-                    required
-                    autoFocus
-                />
+            <form onSubmit={handleSubmit} className="create-group-form">
+                <div className="form-group">
+                    <label htmlFor="group-name">Group Name</label>
+                    <input
+                        id="group-name"
+                        type="text"
+                        value={groupName}
+                        onChange={e => setGroupName(e.target.value)}
+                        placeholder="e.g. CHEM-707"
+                        required
+                        autoFocus
+                        disabled={isSubmitting}
+                    />
+                </div>
+                {error && <div className="error-message">{error}</div>}
+                <div className="modal-footer">
+                    <button
+                        type="button"
+                        className="modal-button modal-button--cancel"
+                        onClick={onClose}
+                        disabled={isSubmitting}
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        type="submit"
+                        className="modal-button modal-button--confirm"
+                        disabled={isSubmitting}
+                    >
+                        {isSubmitting ? 'Creating...' : 'Create'}
+                    </button>
+                </div>
             </form>
         </Modal>
     );
