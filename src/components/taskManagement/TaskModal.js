@@ -15,10 +15,12 @@ export default function TaskModal({
     const [deadline, setDeadline] = useState('');
     const [assignedTo, setAssignedTo] = useState('');
     const [status, setStatus] = useState('To Do');
+    const [id, setId] = useState(0)
 
     useEffect(() => {
         if (show) {
             if (mode === 'edit' && task) {
+                setId(task.id || 0);
                 setTitle(task.title || '');
                 setDescription(task.description || '');
                 setDeadline(task.deadline || '');

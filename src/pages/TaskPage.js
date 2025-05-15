@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { useParams } from 'react-router-dom';
 import Header from '../components/essentials/Header';
 import TaskDashboard from '../components/taskManagement/TaskDashboard';
 import TaskModal from '../components/taskManagement/TaskModal';
 import FloatingActionButton from '../components/essentials/FloatingActionButton';
 import initialGroups from './fillerData/Groups';
-import initialTasks from './fillerData/Tasks';
+import {taskAPI} from '../api/taskAPI';
 import './styles/TaskPage.css';
 
 export default function TaskPage() {
@@ -13,10 +13,28 @@ export default function TaskPage() {
     const group = initialGroups.find(g => g.id === parseInt(groupId, 10));
     const title = group ? `${group.name} tasks:` : 'Tasks:';
 
-    const [tasks, setTasks] = useState(initialTasks);
+    const [tasks, setTasks] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [currentTask, setCurrentTask] = useState(null);
     const [modalMode, setModalMode] = useState('create');
+
+    useEffect(() => {
+        fetchTasks();
+    }, []);
+
+    const fetchTasks = async () => {
+        try{
+            const fetchedTasks = await taskAPI.fetchTasksOfGroup(1) //placeholder group id 1;
+            setTasks(fetchedTasks);
+        }
+        catch(error) {
+            console.error('Error loading tasks:', error);
+        }
+        finally {
+            //will probably be used later
+        }
+
+    }
 
     const handleAddTaskClick = e => {
         e.stopPropagation();

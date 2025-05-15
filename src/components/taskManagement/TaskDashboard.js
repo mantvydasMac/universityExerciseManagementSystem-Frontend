@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import TaskCard from './TaskCard';
 import './styles/TaskDashboard.css';
 
@@ -7,6 +7,10 @@ export default function TaskDashboard({ tasks, onEdit }) {
 
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    useEffect(() => {
+        setTaskList(tasks);
+    }, [tasks]);
 
 
     const handleDragOver = e => {
@@ -37,9 +41,9 @@ export default function TaskDashboard({ tasks, onEdit }) {
         const enriched = { ...task, isLate, isDue };
 
         switch (task.status) {
-            case 'To Do':       toDo.push(enriched); break;
-            case 'In Progress': inProgress.push(enriched); break;
-            case 'Completed':   completed.push(enriched); break;
+            case 'TO_DO':       toDo.push(enriched); break;
+            case 'IN_PROGRESS': inProgress.push(enriched); break;
+            case 'COMPLETED':   completed.push(enriched); break;
             default: break;
         }
     });
