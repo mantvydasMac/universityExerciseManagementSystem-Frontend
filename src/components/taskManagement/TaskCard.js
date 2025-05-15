@@ -62,10 +62,16 @@ export default function TaskCard({ task, onEdit }) {
                 </ul>
                 <div className="task-card__avatar-container">
                     <FaUserCircle className="task-card__avatar-icon" />
-                    <div className="task-card__avatar-tooltip">
-                        <div className="tooltip__name">{assignedToId}</div>
-                        <div className="tooltip__date">Assigned: {assignedDate}</div>
-                    </div>
+                    {assignedToId ? (
+                        <div className="task-card__avatar-tooltip">
+                            <div className="tooltip__name">{assignedToId}</div>
+                            <div className="tooltip__date">Assigned: {assignedDate}</div>
+                        </div>
+                    ) : (
+                        <div className="task-card__avatar-tooltip">
+                            <div className="tooltip__name">Unassigned</div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
