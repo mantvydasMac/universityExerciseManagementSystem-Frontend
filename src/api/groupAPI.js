@@ -51,27 +51,7 @@ export const groupAPI = {
                 throw new Error(`Failed to create profile: ${errorData}`);
             }
 
-            const createdProfile = await profileResponse.json();
-
-            const updatedGroup = {
-                ...createdGroup,
-                profileIds: [createdProfile.id]
-            };
-
-            const updateGroupResponse = await fetch(`/v1/groups`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(updatedGroup)
-            });
-
-            if (!updateGroupResponse.ok) {
-                const errorData = await updateGroupResponse.text();
-                throw new Error(`Failed to update group with profile: ${errorData}`);
-            }
-
-            return await updateGroupResponse.json();
+            return createdGroup;
         } catch (error) {
             console.error('Error in createGroup:', error);
             throw error;
