@@ -34,10 +34,17 @@ export default function TaskDashboard({ tasks, onEdit }) {
     const completed  = [];
 
     taskList.forEach(task => {
-        const d = new Date(task.deadline);
-        const day = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-        const isLate = day < today && task.status !== 'Completed';
-        const isDue  = day.getTime() === today.getTime() && task.status !== 'Completed';
+        let isLate = null;
+        let isDue = null;
+
+        if (task.deadline != null) {
+            const d = new Date(task.deadline);
+            const day = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+            isLate = day < today && task.status !== 'Completed';
+            isDue  = day.getTime() === today.getTime() && task.status !== 'Completed';
+        }
+
+
         const enriched = { ...task, isLate, isDue };
 
         switch (task.status) {

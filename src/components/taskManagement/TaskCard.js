@@ -7,7 +7,7 @@ export default function TaskCard({ task, onEdit }) {
     const { isLate, isDue, status, assignedToId, assignedDate } = task;
     const lateClass      = isLate      ? ' task-card--late'      : '';
     const dueClass       = isDue       ? ' task-card--due'       : '';
-    const completedClass = status === 'Completed' ? ' task-card--completed' : '';
+    const completedClass = status === 'COMPLETED' ? ' task-card--completed' : '';
 
     const [menuOpen, setMenuOpen] = useState(false);
     const toggleMenu = e => {
@@ -58,7 +58,7 @@ export default function TaskCard({ task, onEdit }) {
             <div className="task-card__footer">
                 <ul className="task-card__meta">
                     <li><strong>Created:</strong> {task.createdDate}</li>
-                    <li><strong>Deadline:</strong> {task.deadline}</li>
+                    <li><strong>Deadline:</strong> {task.deadline != null ? task.deadline : "Not set"}</li>
                 </ul>
                 <div className="task-card__avatar-container">
                     <FaUserCircle className="task-card__avatar-icon" />
