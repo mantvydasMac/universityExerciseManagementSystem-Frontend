@@ -7,6 +7,7 @@ import FloatingActionButton from '../components/essentials/FloatingActionButton'
 import initialGroups from './fillerData/Groups';
 import {taskAPI} from '../api/taskAPI';
 import './styles/TaskPage.css';
+import {profilesAPI} from "../api/profilesAPI";
 
 export default function TaskPage() {
     const { groupId } = useParams();
@@ -14,17 +15,21 @@ export default function TaskPage() {
     const title = group ? `${group.name} tasks:` : 'Tasks:';
 
     const [tasks, setTasks] = useState([]);
+    const [profiles, setProfiles] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [currentTask, setCurrentTask] = useState(null);
     const [modalMode, setModalMode] = useState('create');
 
+    const currentGroupId = 1; //placeholder group id 1
+
     useEffect(() => {
-        fetchTasks();
+        fetchTasks(currentGroupId);
+        fetchProfiles(currentGroupId);
     }, []);
 
-    const fetchTasks = async () => {
+    const fetchTasks = async (groupId) => {
         try{
-            const fetchedTasks = await taskAPI.fetchTasksOfGroup(1) //placeholder group id 1;
+            const fetchedTasks = await taskAPI.fetchTasksOfGroup(groupId);
             setTasks(fetchedTasks);
         }
         catch(error) {
@@ -33,7 +38,19 @@ export default function TaskPage() {
         finally {
             //will probably be used later
         }
+    }
 
+    const fetchProfiles = async (groupId) => {
+        try{
+            const fetchedProfiles = await profilesAPI.fetchProfilesOfGroup(groupId);
+            setProfiles(fetchedProfiles);
+        }
+        catch(error) {
+            console.error('Error loading profiles:', error);
+        }
+        finally {
+            //will probably be used later
+        }
     }
 
     const handleAddTaskClick = e => {
@@ -83,6 +100,7 @@ export default function TaskPage() {
             <main className="task-page__main">
                 <TaskDashboard
                     tasks={tasks}
+                    profiles={profiles}
                     onEdit={handleEditTask}
                 />
             </main>
@@ -100,7 +118,7 @@ export default function TaskPage() {
                 onClose={handleCloseModal}
                 onSubmit={handleSubmitTask}
                 task={currentTask}
-                members={memberNames}
+                profiles={profiles}
                 mode={modalMode}
             />
         </div>

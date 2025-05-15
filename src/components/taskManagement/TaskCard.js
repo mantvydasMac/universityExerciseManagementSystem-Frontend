@@ -3,7 +3,7 @@ import { FaUserCircle, FaEllipsisV } from 'react-icons/fa';
 import OverflowMenu from '../essentials/OverflowMenu';
 import './styles/TaskCard.css';
 
-export default function TaskCard({ task, onEdit }) {
+export default function TaskCard({ task, onEdit, profile }) {
     const { isLate, isDue, status, assignedToId, assignedDate } = task;
     const lateClass      = isLate      ? ' task-card--late'      : '';
     const dueClass       = isDue       ? ' task-card--due'       : '';
@@ -64,7 +64,7 @@ export default function TaskCard({ task, onEdit }) {
                     <FaUserCircle className="task-card__avatar-icon" />
                     {assignedToId ? (
                         <div className="task-card__avatar-tooltip">
-                            <div className="tooltip__name">{assignedToId}</div>
+                            <div className="tooltip__name">{profile.username}</div>
                             <div className="tooltip__date">Assigned: {assignedDate}</div>
                         </div>
                     ) : (

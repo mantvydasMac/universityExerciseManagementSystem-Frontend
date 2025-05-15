@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import TaskCard from './TaskCard';
 import './styles/TaskDashboard.css';
 
-export default function TaskDashboard({ tasks, onEdit }) {
+export default function TaskDashboard({ tasks, profiles, onEdit }) {
     const [taskList, setTaskList] = useState(tasks);
 
     const now = new Date();
@@ -73,7 +73,7 @@ export default function TaskDashboard({ tasks, onEdit }) {
                     >
                         <h3 className="task-dashboard__column-header">{col.title}</h3>
                         {col.items.map(task => (
-                            <TaskCard key={task.id} task={task} onEdit={onEdit} />
+                            <TaskCard key={task.id} task={task} onEdit={onEdit} profile={profiles.find(p => p.id === task.assignedToId)}/>
                         ))}
                         {col.items.length === 0 && (
                             <p className="task-dashboard__empty">No tasks here</p>

@@ -7,14 +7,14 @@ export default function TaskModal({
                                       onClose,
                                       onSubmit,
                                       task = {},
-                                      members = [],
+                                      profiles = [],
                                       mode = 'create'
                                   }) {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [deadline, setDeadline] = useState('');
-    const [assignedTo, setAssignedTo] = useState('');
-    const [status, setStatus] = useState('To Do');
+    const [assignedToId, setAssignedToId] = useState(-1);
+    // const [status, setStatus] = useState('To Do');
     const [id, setId] = useState(0)
 
     useEffect(() => {
@@ -24,32 +24,33 @@ export default function TaskModal({
                 setTitle(task.title || '');
                 setDescription(task.description || '');
                 setDeadline(task.deadline || '');
-                setAssignedTo(task.assignedTo || (members[0] || ''));
-                setStatus(task.status || 'To Do');
+                setAssignedToId(task.assignedToId || -1);
+                // setStatus(task.status || 'To Do');
             } else {
                 // Reset fields for new task
                 setTitle('');
                 setDescription('');
                 setDeadline('');
-                setAssignedTo(members[0] || '');
-                setStatus('To Do');
+                setAssignedToId(-1);
+                // setStatus('To Do');
             }
         }
-    }, [show, task, members, mode]);
+    }, [show, task, mode]);
 
     const handleSubmit = e => {
         e.preventDefault();
-        if (!title || !deadline || !assignedTo) return;
+        // if (!title || !deadline || !assignedToId) return;
 
         if (mode === 'edit') {
             const updated = {
-                ...task,
+                id,
                 title,
                 description,
                 deadline,
-                assignedTo,
-                status
+                assignedToId
+                // status
             };
+            console.log(updated);
             onSubmit(updated);
         } else {
             const todayISO = new Date().toISOString().slice(0, 10);
@@ -57,7 +58,7 @@ export default function TaskModal({
                 title,
                 description,
                 deadline,
-                assignedTo,
+                assignedToId,
                 createdAt: todayISO,
                 assignedAt: todayISO,
                 status: 'To Do'
@@ -128,32 +129,35 @@ export default function TaskModal({
                 <label htmlFor={`${fieldPrefix}-assigned`}>Assign To *</label>
                 <select
                     id={`${fieldPrefix}-assigned`}
-                    value={assignedTo}
-                    onChange={e => setAssignedTo(e.target.value)}
+                    value={assignedToId}
+                    onChange={e => setAssignedToId(e.target.value)}
                     required
                 >
-                    {members.map(name => (
-                        <option key={name} value={name}>
-                            {name}
+                    <option key={-1} value={-1}>
+                        Unassigned
+                    </option>
+                    {profiles.map(p => (
+                        <option key={p.id} value={p.id}>
+                            {p.username}
                         </option>
                     ))}
                 </select>
 
-                {mode === 'edit' && (
-                    <>
-                        <label htmlFor={`${fieldPrefix}-status`}>Status *</label>
-                        <select
-                            id={`${fieldPrefix}-status`}
-                            value={status}
-                            onChange={e => setStatus(e.target.value)}
-                            required
-                        >
-                            <option value="To Do">To Do</option>
-                            <option value="In Progress">In Progress</option>
-                            <option value="Completed">Completed</option>
-                        </select>
-                    </>
-                )}
+                {/*{mode === 'edit' && (*/}
+                {/*    <>*/}
+                {/*        <label htmlFor={`${fieldPrefix}-status`}>Status *</label>*/}
+                {/*        <select*/}
+                {/*            id={`${fieldPrefix}-status`}*/}
+                {/*            value={status}*/}
+                {/*            onChange={e => setStatus(e.target.value)}*/}
+                {/*            required*/}
+                {/*        >*/}
+                {/*            <option value="TO_DO">To Do</option>*/}
+                {/*            <option value="IN_PROGRESS">In Progress</option>*/}
+                {/*            <option value="COMPLETED">Completed</option>*/}
+                {/*        </select>*/}
+                {/*    </>*/}
+                {/*)}*/}
             </form>
         </Modal>
     );
