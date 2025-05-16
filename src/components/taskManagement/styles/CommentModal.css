@@ -1,0 +1,47 @@
+.modal-title-content {
+    padding-right: 1.5rem;
+}
+
+.modal-title-content__title {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.25rem;
+    color: #333;
+    font-weight: bold;
+}
+
+.modal-title-content__description {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #666;
+    line-height: 1.4;
+    font-weight: normal;
+}
+
+.comment-modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.comment-form {
+    padding: 1rem 0 0;
+    border-top: 1px solid #e0e0e0;
+}
+
+.comment-form__textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+    min-height: 100px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.comment-form__textarea:focus {
+    outline: none;
+    border-color: #0066cc;
+    box-shadow: 0 0 0 2px rgba(0,102,204,0.2);
+}
