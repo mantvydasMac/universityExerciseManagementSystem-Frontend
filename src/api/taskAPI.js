@@ -22,9 +22,15 @@ export const taskAPI = {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: task
+                body: JSON.stringify(task)
             });
 
+            if (!response.ok) {
+                const errorData = await response.text();
+                throw new Error(`Failed to update task: ${errorData}`);
+            }
+
+            return await response.json();
 
         } catch (error) {
             console.error('Error updating task:', error);

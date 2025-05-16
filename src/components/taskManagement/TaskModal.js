@@ -39,15 +39,17 @@ export default function TaskModal({
 
     const handleSubmit = e => {
         e.preventDefault();
-        // if (!title || !deadline || !assignedToId) return;
+        console.log(!title, !deadline, !assignedToId);
+        if (!title || !assignedToId) return;
 
         if (mode === 'edit') {
+
             const updated = {
                 id,
                 title,
                 description,
-                deadline,
-                assignedToId
+                deadline: deadline === "" ? null : deadline,
+                assignedToId: assignedToId === -1 ? null : assignedToId
                 // status
             };
             console.log(updated);
@@ -130,7 +132,7 @@ export default function TaskModal({
                 <select
                     id={`${fieldPrefix}-assigned`}
                     value={assignedToId}
-                    onChange={e => setAssignedToId(e.target.value)}
+                    onChange={e => setAssignedToId(parseInt(e.target.value, 10))}
                     required
                 >
                     <option key={-1} value={-1}>

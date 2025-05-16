@@ -73,11 +73,18 @@ export default function TaskPage() {
         }
     };
 
-    const handleSubmitTask = taskData => {
+    const handleSubmitTask = async taskData => {
         if (modalMode === 'edit') {
-            setTasks(prev =>
-                prev.map(t => (t.id === taskData.id ? taskData : t))
+            let updatedTask = await taskAPI.updateTask(taskData);
+
+            setTasks(prevTasks =>
+                prevTasks.map(task =>
+                    task.id === updatedTask.id ? updatedTask : task
+                )
             );
+            // setTasks(prev =>
+            //     prev.map(t => (t.id === taskData.id ? taskData : t))
+            // );
         } else {
             const nextId = tasks.length
                 ? Math.max(...tasks.map(t => t.id)) + 1
@@ -87,9 +94,9 @@ export default function TaskPage() {
         setShowModal(false);
     };
 
-    const memberNames = Array.from(
-        new Set(tasks.map(t => t.assignedTo).filter(Boolean))
-    );
+    // const memberNames = Array.from(
+    //     new Set(tasks.map(t => t.assignedTo).filter(Boolean))
+    // );
 
     return (
         <div className="task-page" onClick={() => {
