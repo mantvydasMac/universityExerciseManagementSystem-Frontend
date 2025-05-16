@@ -35,9 +35,6 @@ export default function TaskPage() {
         catch(error) {
             console.error('Error loading tasks:', error);
         }
-        finally {
-            //will probably be used later
-        }
     }
 
     const fetchProfiles = async (groupId) => {
@@ -47,9 +44,6 @@ export default function TaskPage() {
         }
         catch(error) {
             console.error('Error loading profiles:', error);
-        }
-        finally {
-            //will probably be used later
         }
     }
 
@@ -82,9 +76,6 @@ export default function TaskPage() {
                     task.id === updatedTask.id ? updatedTask : task
                 )
             );
-            // setTasks(prev =>
-            //     prev.map(t => (t.id === taskData.id ? taskData : t))
-            // );
         } else {
             const nextId = tasks.length
                 ? Math.max(...tasks.map(t => t.id)) + 1
