@@ -45,3 +45,9 @@
     border-color: #0066cc;
     box-shadow: 0 0 0 2px rgba(0,102,204,0.2);
 }
+
+.error-message{
+    color: #d9534f;
+    font-size: 0.85rem;
+    margin-top: -1rem;
+}

@@ -105,6 +105,7 @@ export default function TaskCard({ task, onEdit, profile }) {
                 taskId={task.id}
                 onSubmit={handleCommentSubmit}
                 task={task}
+                profile={profile}
             />
         </>
     );

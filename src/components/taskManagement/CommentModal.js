@@ -4,11 +4,13 @@ import CommentDashboard from './CommentDashboard';
 import { commentAPI } from '../../api/commentAPI';
 import './styles/CommentModal.css';
 
-export default function CommentModal({ show, onClose, taskId, onSubmit, task }) {
+export default function CommentModal({ show, onClose, taskId, onSubmit, task, profile }) {
     const [comment, setComment] = useState('');
     const [comments, setComments] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState(null);
+    const [submitError, setSubmitError] = useState(null);
 
     useEffect(() => {
         const loadComments = async () => {
@@ -26,12 +28,36 @@ export default function CommentModal({ show, onClose, taskId, onSubmit, task }) 
                 }
             }
         };
-
         loadComments();
     }, [show, taskId]);
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
+        const trimmed = comment.trim();
+        if (!trimmed) return;
+        if (trimmed.length > 255) {
+            setSubmitError('Comment must be 255 characters or less.');
+            return;
+        }
 
+        setSubmitting(true);
+        setSubmitError(null);
+
+        try {
+            const newCommentDto = {
+                content: trimmed,
+                taskId: taskId,
+                profileId: profile.id,
+            };
+            const created = await commentAPI.createComment(newCommentDto);
+            setComments(prev => [...prev, created]);
+            setComment('');
+            if (onSubmit) onSubmit(created);
+        } catch (err) {
+            console.error('Error creating comment:', err);
+            setSubmitError('Failed to add comment');
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     const footer = (
@@ -39,15 +65,20 @@ export default function CommentModal({ show, onClose, taskId, onSubmit, task }) 
             <button
                 className="modal-button modal-button--cancel"
                 onClick={onClose}
+                disabled={submitting}
             >
                 Cancel
             </button>
             <button
                 className="modal-button modal-button--confirm"
                 onClick={handleSubmit}
-                disabled={!comment.trim()}
+                disabled={
+                    submitting ||
+                    !comment.trim() ||
+                    comment.trim().length > 255
+                }
             >
-                Add Comment
+                {submitting ? 'Adding…' : 'Add Comment'}
             </button>
         </>
     );
@@ -79,15 +110,28 @@ export default function CommentModal({ show, onClose, taskId, onSubmit, task }) 
                 ) : (
                     <CommentDashboard comments={comments} />
                 )}
+
                 <div className="comment-form">
-                    <textarea
-                        className="comment-form__textarea"
-                        value={comment}
-                        onChange={(e) => setComment(e.target.value)}
-                        placeholder="Write your comment here..."
-                        rows={4}
-                        autoFocus
-                    />
+          <textarea
+              className="comment-form__textarea"
+              value={comment}
+              onChange={e => {
+                  setComment(e.target.value);
+                  setSubmitError(null);
+              }}
+              placeholder="Write your comment here..."
+              rows={4}
+              autoFocus
+              disabled={submitting}
+          />
+                    {comment.length > 255 && (
+                        <div className="error-message">
+                            Comment must be 255 characters or less.
+                        </div>
+                    )}
+                    {submitError && (
+                        <div className="error-message">{submitError}</div>
+                    )}
                 </div>
             </div>
         </Modal>
