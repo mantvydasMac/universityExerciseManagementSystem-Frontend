@@ -9,6 +9,7 @@
 .task-dashboard__column {
     background: #f9f9f9;
     border-radius: 6px;
+    min-height: 50vh;
 }
 .task-dashboard__column-header {
     margin: 0 0 0.5rem;
@@ -26,4 +27,9 @@
     .task-dashboard__columns {
         grid-template-columns: 1fr;
     }
+}
+.task-dashboard__columns--dragging > .task-dashboard__column {
+    background-color: #e0f0ff;
+    border: 2px dashed #3399ff;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
