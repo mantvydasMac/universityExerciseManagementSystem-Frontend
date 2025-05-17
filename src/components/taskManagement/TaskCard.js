@@ -3,11 +3,11 @@ import { FaUserCircle, FaEllipsisV } from 'react-icons/fa';
 import OverflowMenu from '../essentials/OverflowMenu';
 import './styles/TaskCard.css';
 
-export default function TaskCard({ task, onEdit }) {
-    const { isLate, isDue, status, assignedTo, assignedAt } = task;
+export default function TaskCard({ task, onEdit, profile }) {
+    const { isLate, isDue, status, assignedToId, assignedDate } = task;
     const lateClass      = isLate      ? ' task-card--late'      : '';
     const dueClass       = isDue       ? ' task-card--due'       : '';
-    const completedClass = status === 'Completed' ? ' task-card--completed' : '';
+    const completedClass = status === 'COMPLETED' ? ' task-card--completed' : '';
 
     const [menuOpen, setMenuOpen] = useState(false);
     const toggleMenu = e => {
@@ -57,15 +57,21 @@ export default function TaskCard({ task, onEdit }) {
 
             <div className="task-card__footer">
                 <ul className="task-card__meta">
-                    <li><strong>Created:</strong> {task.createdAt}</li>
-                    <li><strong>Deadline:</strong> {task.deadline}</li>
+                    <li><strong>Created:</strong> {task.createdDate}</li>
+                    <li><strong>Deadline:</strong> {task.deadline != null ? task.deadline : "Not set"}</li>
                 </ul>
                 <div className="task-card__avatar-container">
                     <FaUserCircle className="task-card__avatar-icon" />
-                    <div className="task-card__avatar-tooltip">
-                        <div className="tooltip__name">{assignedTo}</div>
-                        <div className="tooltip__date">Assigned: {assignedAt}</div>
-                    </div>
+                    {assignedToId ? (
+                        <div className="task-card__avatar-tooltip">
+                            <div className="tooltip__name">{profile.username}</div>
+                            <div className="tooltip__date">Assigned: {assignedDate}</div>
+                        </div>
+                    ) : (
+                        <div className="task-card__avatar-tooltip">
+                            <div className="tooltip__name">Unassigned</div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
