@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Header from '../components/essentials/Header';
 import GroupDashboard from '../components/groupManagement/GroupDashboard';
 import CreateGroupModal from '../components/groupManagement/CreateGroupModal';
 import OverflowMenu from '../components/essentials/OverflowMenu';
 import FloatingActionButton from '../components/essentials/FloatingActionButton';
 import { groupAPI } from '../api/groupAPI';
+import { GroupsContext } from '../context/GroupsContext';
 import './styles/GroupPage.css';
 
 export default function GroupPage() {
-    const [groups, setGroups] = useState([]);
+    const { groups: ctxGroups, setGroups: setCtxGroups } = useContext(GroupsContext);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [fabOpen, setFabOpen] = useState(false);
@@ -23,12 +24,12 @@ export default function GroupPage() {
     const fetchGroups = async () => {
         try {
             setLoading(true);
-            const fetchedGroups = await groupAPI.getUserGroups(currentUserId);
-            setGroups(fetchedGroups);
+            const fetched = await groupAPI.getUserGroups(currentUserId);
+            setCtxGroups(fetched);
             setError(null);
         } catch (err) {
-            setError('Failed to load groups');
             console.error('Error loading groups:', err);
+            setError('Failed to load groups');
         } finally {
             setLoading(false);
         }
@@ -38,7 +39,6 @@ export default function GroupPage() {
         e.stopPropagation();
         setFabOpen(o => !o);
     };
-
     const closeFabMenu = () => setFabOpen(false);
 
     const handleCreateClick = () => {
@@ -46,11 +46,11 @@ export default function GroupPage() {
         setFabOpen(false);
     };
 
-    const handleCreateGroup = async (name) => {
+    const handleCreateGroup = async name => {
         try {
             setLoading(true);
             const newGroup = await groupAPI.createGroup(name, currentUserId);
-            setGroups(prevGroups => [...prevGroups, newGroup]);
+            setCtxGroups(prev => [...prev, newGroup]);
             setShowCreateModal(false);
         } catch (err) {
             console.error('Error creating group:', err);
@@ -62,17 +62,15 @@ export default function GroupPage() {
     return (
         <div className="group-page" onClick={closeFabMenu}>
             <Header title="Your groups:" />
-
             <main className="group-page__main">
                 {loading ? (
-                    <p>Loading groups...</p>
+                    <p>Loading groups…</p>
                 ) : error ? (
                     <p className="error-message">{error}</p>
                 ) : (
-                    <GroupDashboard groups={groups} />
+                    <GroupDashboard groups={ctxGroups} />
                 )}
             </main>
-
             <div className="fab-container" onClick={e => e.stopPropagation()}>
                 <OverflowMenu
                     open={fabOpen}
@@ -82,14 +80,8 @@ export default function GroupPage() {
                         { label: 'Join Group', onClick: () => setFabOpen(false) }
                     ]}
                 />
-
-                <FloatingActionButton
-                    ariaLabel="Add group"
-                    icon="+"
-                    onClick={toggleFabMenu}
-                />
+                <FloatingActionButton ariaLabel="Add group" icon="+" onClick={toggleFabMenu} />
             </div>
-
             <CreateGroupModal
                 show={showCreateModal}
                 onClose={() => setShowCreateModal(false)}
