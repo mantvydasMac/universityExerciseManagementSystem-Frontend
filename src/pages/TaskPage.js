@@ -1,22 +1,51 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { useParams } from 'react-router-dom';
 import Header from '../components/essentials/Header';
 import TaskDashboard from '../components/taskManagement/TaskDashboard';
 import TaskModal from '../components/taskManagement/TaskModal';
 import FloatingActionButton from '../components/essentials/FloatingActionButton';
 import initialGroups from './fillerData/Groups';
-import initialTasks from './fillerData/Tasks';
+import {taskAPI} from '../api/taskAPI';
 import './styles/TaskPage.css';
+import {profilesAPI} from "../api/profilesAPI";
 
 export default function TaskPage() {
     const { groupId } = useParams();
     const group = initialGroups.find(g => g.id === parseInt(groupId, 10));
     const title = group ? `${group.name} tasks:` : 'Tasks:';
 
-    const [tasks, setTasks] = useState(initialTasks);
+    const [tasks, setTasks] = useState([]);
+    const [profiles, setProfiles] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [currentTask, setCurrentTask] = useState(null);
     const [modalMode, setModalMode] = useState('create');
+
+    const currentGroupId = 1; //placeholder group id 1
+
+    useEffect(() => {
+        fetchTasks(currentGroupId);
+        fetchProfiles(currentGroupId);
+    }, []);
+
+    const fetchTasks = async (groupId) => {
+        try{
+            const fetchedTasks = await taskAPI.fetchTasksOfGroup(groupId);
+            setTasks(fetchedTasks);
+        }
+        catch(error) {
+            console.error('Error loading tasks:', error);
+        }
+    }
+
+    const fetchProfiles = async (groupId) => {
+        try{
+            const fetchedProfiles = await profilesAPI.fetchProfilesOfGroup(groupId);
+            setProfiles(fetchedProfiles);
+        }
+        catch(error) {
+            console.error('Error loading profiles:', error);
+        }
+    }
 
     const handleAddTaskClick = e => {
         e.stopPropagation();
@@ -38,10 +67,14 @@ export default function TaskPage() {
         }
     };
 
-    const handleSubmitTask = taskData => {
+    const handleSubmitTask = async taskData => {
         if (modalMode === 'edit') {
-            setTasks(prev =>
-                prev.map(t => (t.id === taskData.id ? taskData : t))
+            let updatedTask = await taskAPI.updateTask(taskData);
+
+            setTasks(prevTasks =>
+                prevTasks.map(task =>
+                    task.id === updatedTask.id ? updatedTask : task
+                )
             );
         } else {
             const nextId = tasks.length
@@ -52,9 +85,9 @@ export default function TaskPage() {
         setShowModal(false);
     };
 
-    const memberNames = Array.from(
-        new Set(tasks.map(t => t.assignedTo).filter(Boolean))
-    );
+    // const memberNames = Array.from(
+    //     new Set(tasks.map(t => t.assignedTo).filter(Boolean))
+    // );
 
     return (
         <div className="task-page" onClick={() => {
@@ -65,6 +98,7 @@ export default function TaskPage() {
             <main className="task-page__main">
                 <TaskDashboard
                     tasks={tasks}
+                    profiles={profiles}
                     onEdit={handleEditTask}
                 />
             </main>
@@ -82,7 +116,7 @@ export default function TaskPage() {
                 onClose={handleCloseModal}
                 onSubmit={handleSubmitTask}
                 task={currentTask}
-                members={memberNames}
+                profiles={profiles}
                 mode={modalMode}
             />
         </div>
