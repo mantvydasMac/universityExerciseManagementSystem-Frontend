@@ -1,10 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from '../essentials/Modal';
 import CommentDashboard from './CommentDashboard';
+import { commentAPI } from '../../api/commentAPI';
 import './styles/CommentModal.css';
 
 export default function CommentModal({ show, onClose, taskId, onSubmit, task }) {
     const [comment, setComment] = useState('');
+    const [comments, setComments] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const loadComments = async () => {
+            if (show && taskId) {
+                setLoading(true);
+                try {
+                    const fetchedComments = await commentAPI.fetchCommentsOfTask(taskId);
+                    setComments(fetchedComments);
+                    setError(null);
+                } catch (err) {
+                    setError('Failed to load comments');
+                    console.error('Error loading comments:', err);
+                } finally {
+                    setLoading(false);
+                }
+            }
+        };
+
+        loadComments();
+    }, [show, taskId]);
 
     const handleSubmit = () => {
 
@@ -39,29 +63,6 @@ export default function CommentModal({ show, onClose, taskId, onSubmit, task }) 
         </div>
     );
 
-    const comments = [
-        {
-            createdBy: 'john-doe',
-            createdAt: '2025-05-16 12:00:00',
-            comment: 'Another comment here.'
-        },
-        {
-            createdBy: 'jane-smith',
-            createdAt: '2025-05-16 13:30:15',
-            comment: 'Great work on this task!'
-        },
-        {
-            createdBy: 'alex-johnson',
-            createdAt: '2025-05-16 14:45:30',
-            comment: 'I have some suggestions for improvement. Let\'s discuss. I think we can enhance the user experience by adding more features. I would love to hear your thoughts on this. I believe it could make a significant difference in the overall functionality of the application.'
-        },
-        {
-            createdBy: 'emily-davis',
-            createdAt: '2025-05-16 15:10:00',
-            comment: 'Looking forward to your feedback! Let me know if you need any help. I am here to assist you.'
-        }
-    ];
-
     return (
         <Modal
             show={show}
@@ -71,7 +72,13 @@ export default function CommentModal({ show, onClose, taskId, onSubmit, task }) 
             ariaLabelledBy="comment-modal-title"
         >
             <div className="comment-modal-content">
-                <CommentDashboard comments={comments} />
+                {loading ? (
+                    <div>Loading comments...</div>
+                ) : error ? (
+                    <div className="error-message">{error}</div>
+                ) : (
+                    <CommentDashboard comments={comments} />
+                )}
                 <div className="comment-form">
                     <textarea
                         className="comment-form__textarea"
