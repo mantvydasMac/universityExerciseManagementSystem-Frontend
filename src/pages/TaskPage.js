@@ -1,17 +1,19 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import Header from '../components/essentials/Header';
 import TaskDashboard from '../components/taskManagement/TaskDashboard';
 import TaskModal from '../components/taskManagement/TaskModal';
 import FloatingActionButton from '../components/essentials/FloatingActionButton';
-import initialGroups from './fillerData/Groups';
-import {taskAPI} from '../api/taskAPI';
+import { taskAPI } from '../api/taskAPI';
+import { profilesAPI } from '../api/profilesAPI';
+import { GroupsContext } from '../context/GroupsContext';
 import './styles/TaskPage.css';
-import {profilesAPI} from "../api/profilesAPI";
 
 export default function TaskPage() {
     const { groupId } = useParams();
-    const group = initialGroups.find(g => g.id === parseInt(groupId, 10));
+    const { groups } = useContext(GroupsContext);
+
+    const group = groups.find(g => g.id === parseInt(groupId, 10));
     const title = group ? `${group.name} tasks:` : 'Tasks:';
 
     const [tasks, setTasks] = useState([]);
@@ -20,32 +22,29 @@ export default function TaskPage() {
     const [currentTask, setCurrentTask] = useState(null);
     const [modalMode, setModalMode] = useState('create');
 
-    const currentGroupId = 1; //placeholder group id 1
-
     useEffect(() => {
-        fetchTasks(currentGroupId);
-        fetchProfiles(currentGroupId);
-    }, []);
+        if (!group) return;
+        fetchTasks(group.id);
+        fetchProfiles(group.id);
+    }, [group]);
 
-    const fetchTasks = async (groupId) => {
-        try{
-            const fetchedTasks = await taskAPI.fetchTasksOfGroup(groupId);
+    const fetchTasks = async gid => {
+        try {
+            const fetchedTasks = await taskAPI.fetchTasksOfGroup(gid);
             setTasks(fetchedTasks);
+        } catch (err) {
+            console.error('Error loading tasks:', err);
         }
-        catch(error) {
-            console.error('Error loading tasks:', error);
-        }
-    }
+    };
 
-    const fetchProfiles = async (groupId) => {
-        try{
-            const fetchedProfiles = await profilesAPI.fetchProfilesOfGroup(groupId);
+    const fetchProfiles = async gid => {
+        try {
+            const fetchedProfiles = await profilesAPI.fetchProfilesOfGroup(gid);
             setProfiles(fetchedProfiles);
+        } catch (err) {
+            console.error('Error loading profiles:', err);
         }
-        catch(error) {
-            console.error('Error loading profiles:', error);
-        }
-    }
+    };
 
     const handleAddTaskClick = e => {
         e.stopPropagation();
@@ -53,64 +52,40 @@ export default function TaskPage() {
         setCurrentTask(null);
         setShowModal(true);
     };
-
-    const handleEditTask = task => {
-        setCurrentTask(task);
+    const handleEditTask = t => {
+        setCurrentTask(t);
         setModalMode('edit');
         setShowModal(true);
     };
-
     const handleCloseModal = () => {
         setShowModal(false);
-        if (modalMode === 'edit') {
-            setCurrentTask(null);
-        }
+        if (modalMode === 'edit') setCurrentTask(null);
     };
-
-    const handleSubmitTask = async taskData => {
+    const handleSubmitTask = async data => {
         if (modalMode === 'edit') {
-            let updatedTask = await taskAPI.updateTask(taskData);
-
-            setTasks(prevTasks =>
-                prevTasks.map(task =>
-                    task.id === updatedTask.id ? updatedTask : task
-                )
-            );
+            const updated = await taskAPI.updateTask(data);
+            setTasks(ts => ts.map(t => (t.id === updated.id ? updated : t)));
         } else {
-            const nextId = tasks.length
-                ? Math.max(...tasks.map(t => t.id)) + 1
-                : 1;
-            setTasks(prev => [...prev, { id: nextId, ...taskData }]);
+            const nextId = tasks.length ? Math.max(...tasks.map(t => t.id)) + 1 : 1;
+            setTasks(ts => [...ts, { id: nextId, ...data }]);
         }
         setShowModal(false);
     };
 
-    // const memberNames = Array.from(
-    //     new Set(tasks.map(t => t.assignedTo).filter(Boolean))
-    // );
-
     return (
-        <div className="task-page" onClick={() => {
-            if (showModal) handleCloseModal();
-        }}>
+        <div
+            className="task-page"
+            onClick={() => {
+                if (showModal) handleCloseModal();
+            }}
+        >
             <Header title={title} />
-
             <main className="task-page__main">
-                <TaskDashboard
-                    tasks={tasks}
-                    profiles={profiles}
-                    onEdit={handleEditTask}
-                />
+                <TaskDashboard tasks={tasks} profiles={profiles} onEdit={handleEditTask} />
             </main>
-
             <div className="fab-container" onClick={e => e.stopPropagation()}>
-                <FloatingActionButton
-                    ariaLabel="Add task"
-                    icon="+"
-                    onClick={handleAddTaskClick}
-                />
+                <FloatingActionButton ariaLabel="Add task" icon="+" onClick={handleAddTaskClick} />
             </div>
-
             <TaskModal
                 show={showModal}
                 onClose={handleCloseModal}
