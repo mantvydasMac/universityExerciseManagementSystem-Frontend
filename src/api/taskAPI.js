@@ -38,6 +38,31 @@ export const taskAPI = {
         }
     },
 
+    async createTask(task) {
+        try {
+            const response = await fetch(`/v1/tasks`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(task),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.text();
+                throw new Error(`Failed to create task: ${errorData}`);
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error('Error creating task:', error);
+            throw error;
+        }
+    }
+
+}
+    },
+
     async deleteTask(taskId) {
         try {
             const response = await fetch(`/v1/tasks/${taskId}`, {
