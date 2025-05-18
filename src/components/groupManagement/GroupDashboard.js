@@ -12,7 +12,10 @@ export default function GroupDashboard({ groups }) {
     }
 
     return (
-        <div className="group-list" onClick={closeMenu}>
+        <div
+            className="group-list"
+            onClick={closeMenu}
+        >
             {groups.map(g => (
                 <GroupCard
                     key={g.id}

@@ -25,5 +25,31 @@ export const profilesAPI = {
             console.error('Error fetching profile:', error);
             throw error;
         }
+    },
+
+    async createProfile({ username, userId, groupId }) {
+        try {
+            const response = await fetch(`/v1/profiles`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username,
+                    userId,
+                    groupId,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to create profile');
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error('Error creating profile:', error);
+            throw error;
+        }
     }
+
 }
