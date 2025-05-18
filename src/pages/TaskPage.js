@@ -4,27 +4,27 @@ import Header from '../components/essentials/Header';
 import TaskDashboard from '../components/taskManagement/TaskDashboard';
 import TaskModal from '../components/taskManagement/TaskModal';
 import FloatingActionButton from '../components/essentials/FloatingActionButton';
-import initialGroups from './fillerData/Groups';
 import {taskAPI} from '../api/taskAPI';
 import './styles/TaskPage.css';
 import {profilesAPI} from "../api/profilesAPI";
+import {groupAPI} from "../api/groupAPI";
 
 export default function TaskPage() {
-    const { groupId } = useParams();
-    const group = initialGroups.find(g => g.id === parseInt(groupId, 10));
-    const title = group ? `${group.name} tasks:` : 'Tasks:';
+    let { groupId } = useParams();
+    groupId = parseInt(groupId, 10);
 
+    const [group, setGroup] = useState(null);
     const [tasks, setTasks] = useState([]);
     const [profiles, setProfiles] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [currentTask, setCurrentTask] = useState(null);
     const [modalMode, setModalMode] = useState('create');
 
-    const currentGroupId = 1; //placeholder group id 1
 
     useEffect(() => {
-        fetchTasks(currentGroupId);
-        fetchProfiles(currentGroupId);
+        fetchTasks(groupId);
+        fetchProfiles(groupId);
+        getGroup(groupId)
     }, []);
 
     const fetchTasks = async (groupId) => {
@@ -44,6 +44,16 @@ export default function TaskPage() {
         }
         catch(error) {
             console.error('Error loading profiles:', error);
+        }
+    }
+
+    const getGroup = async (groupId) => {
+        try{
+            const group = await groupAPI.getGroupById(groupId);
+            setGroup(group);
+        }
+        catch(error) {
+            console.error('Error loading group:', error);
         }
     }
 
@@ -93,7 +103,7 @@ export default function TaskPage() {
         <div className="task-page" onClick={() => {
             if (showModal) handleCloseModal();
         }}>
-            <Header title={title} />
+            <Header title={group === null ? "" : group.name} />
 
             <main className="task-page__main">
                 <TaskDashboard
