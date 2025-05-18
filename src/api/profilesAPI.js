@@ -11,5 +11,19 @@ export const profilesAPI = {
             console.error('Error fetching profiles:', error);
             throw error;
         }
+    },
+
+    async fetchProfileById(profileId) {
+        try {
+            const response = await fetch(`/v1/profiles/${profileId}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch profile');
+            }
+            return await response.json();
+
+        } catch (error) {
+            console.error('Error fetching profile:', error);
+            throw error;
+        }
     }
 }
