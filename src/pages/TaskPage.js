@@ -77,10 +77,8 @@ export default function TaskPage() {
                 )
             );
         } else {
-            const nextId = tasks.length
-                ? Math.max(...tasks.map(t => t.id)) + 1
-                : 1;
-            setTasks(prev => [...prev, { id: nextId, ...taskData }]);
+            const createdTask = await taskAPI.createTask(taskData);
+            setTasks(prev => [...prev, createdTask]);
         }
         setShowModal(false);
     };
@@ -118,6 +116,8 @@ export default function TaskPage() {
                 task={currentTask}
                 profiles={profiles}
                 mode={modalMode}
+                groupId={currentGroupId}
+                createdById={1} //placeholder
             />
         </div>
     );
