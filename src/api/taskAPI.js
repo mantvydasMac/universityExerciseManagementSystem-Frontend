@@ -36,5 +36,20 @@ export const taskAPI = {
             console.error('Error updating task:', error);
             throw error;
         }
+    },
+
+    async deleteTask(taskId) {
+        try {
+            const response = await fetch(`/v1/tasks/${taskId}`, {
+                method: 'DELETE'
+            });
+            if (!response.ok) {
+                const errorData = await response.text();
+                throw new Error(`Failed to delete task: ${errorData}`);
+            }
+        } catch (error) {
+            console.error('Error deleting task:', error);
+            throw error;
+        }
     }
-}
+};

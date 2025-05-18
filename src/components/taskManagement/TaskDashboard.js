@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import TaskCard from './TaskCard';
 import './styles/TaskDashboard.css';
 
@@ -32,6 +32,10 @@ export default function TaskDashboard({ tasks, profiles, onEdit }) {
     const toDo       = [];
     const inProgress = [];
     const completed  = [];
+
+    const handleDelete = deletedId => {
+        setTaskList(prev => prev.filter(t => t.id !== deletedId));
+    };
 
     taskList.forEach(task => {
         let isLate = null;
@@ -73,7 +77,13 @@ export default function TaskDashboard({ tasks, profiles, onEdit }) {
                     >
                         <h3 className="task-dashboard__column-header">{col.title}</h3>
                         {col.items.map(task => (
-                            <TaskCard key={task.id} task={task} onEdit={onEdit} profile={profiles.find(p => p.id === task.assignedToId)}/>
+                            <TaskCard
+                                key={task.id}
+                                task={task}
+                                profile={profiles.find(p => p.id === task.assignedToId)}
+                                onEdit={onEdit}
+                                onDelete={handleDelete}    // pass delete callback
+                            />
                         ))}
                         {col.items.length === 0 && (
                             <p className="task-dashboard__empty">No tasks here</p>
