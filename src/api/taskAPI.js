@@ -58,9 +58,6 @@ export const taskAPI = {
             console.error('Error creating task:', error);
             throw error;
         }
-    }
-
-}
     },
 
     async deleteTask(taskId) {
