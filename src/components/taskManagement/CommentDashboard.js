@@ -27,8 +27,16 @@ export default function CommentDashboard({ comments }) {
         };
 
         fetchProfiles();
-// eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [comments]);
+
+    const formatDateTime = (isoString) => {
+        const date = new Date(isoString);
+        return date.toLocaleString(undefined, {
+            dateStyle: 'medium',
+            timeStyle: 'short',
+        });
+    };
 
     if (!comments || comments.length === 0) {
         return (
@@ -58,7 +66,7 @@ export default function CommentDashboard({ comments }) {
                                 </span>
                             </div>
                             <span className="comment__timestamp">
-                                {comment.createdAt} {/* TODO: fix bug in backend */}
+                                    {formatDateTime(comment.createdAt)}
                             </span>
                         </div>
                         <div className="comment__content">
