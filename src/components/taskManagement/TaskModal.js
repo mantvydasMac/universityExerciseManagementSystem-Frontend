@@ -65,6 +65,7 @@ export default function TaskModal({
                 groupId,
                 createdById
             };
+            console.log(newTask);
             onSubmit(newTask);
         }
         onClose();
