@@ -1,9 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import TaskCard from './TaskCard';
 import './styles/TaskDashboard.css';
+import {taskAPI} from "../../api/taskAPI";
 
 export default function TaskDashboard({ tasks, profiles, onEdit }) {
     const [taskList, setTaskList] = useState(tasks);
+    const [isDragging, setIsDragging] = useState(false);
 
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -17,16 +19,33 @@ export default function TaskDashboard({ tasks, profiles, onEdit }) {
         e.preventDefault();
     };
 
-    const handleDrop = (e, newStatus) => {
+    const handleDrop = async (e, newStatusLabel) => {
+        setIsDragging(false);
         e.preventDefault();
         const id = e.dataTransfer.getData('text/plain');
-        setTaskList(prev =>
-            prev.map(t =>
-                t.id.toString() === id
-                    ? { ...t, status: newStatus }
-                    : t
-            )
-        );
+        const newStatus = statusLabelToEnum[newStatusLabel];
+        if (!newStatus) {
+            console.error('Unknown status:', newStatusLabel);
+            return;
+        }
+
+        const taskToUpdate = taskList.find(task => task.id.toString() === id);
+        if (!taskToUpdate) return;
+
+        const updatedTask = { ...taskToUpdate, status: newStatus };
+
+        try {
+            const updatedFromServer = await taskAPI.updateTask(updatedTask);
+            setTaskList(prev =>
+                prev.map(t =>
+                    t.id.toString() === id
+                        ? updatedFromServer
+                        : t
+                )
+            );
+        } catch (error) {
+            console.error('Failed to update task status:', error);
+        }
     };
 
     const toDo       = [];
@@ -54,6 +73,12 @@ export default function TaskDashboard({ tasks, profiles, onEdit }) {
             default: break;
         }
     });
+    const statusLabelToEnum = {
+        'To Do': 'TO_DO',
+        'In Progress': 'IN_PROGRESS',
+        'Completed': 'COMPLETED',
+        'Late': 'LATE',
+    };
 
     const columns = [
         { title: 'To Do',       items: toDo },
@@ -61,26 +86,42 @@ export default function TaskDashboard({ tasks, profiles, onEdit }) {
         { title: 'Completed',   items: completed },
     ];
 
+    const handleDragEnterDashboard = e => {
+        e.preventDefault();
+        setIsDragging(true);
+    };
+
+    const handleDragLeaveDashboard = e => {
+        e.preventDefault();
+        if (!e.currentTarget.contains(e.relatedTarget)) {
+            setIsDragging(false);
+        }
+    };
+
     return (
-        <section className="task-dashboard">
-            <div className="task-dashboard__columns">
-                {columns.map(col => (
-                    <div
-                        key={col.title}
-                        className="task-dashboard__column"
-                        onDragOver={handleDragOver}
-                        onDrop={e => handleDrop(e, col.title)}
-                    >
-                        <h3 className="task-dashboard__column-header">{col.title}</h3>
-                        {col.items.map(task => (
-                            <TaskCard key={task.id} task={task} onEdit={onEdit} profile={profiles.find(p => p.id === task.assignedToId)}/>
-                        ))}
-                        {col.items.length === 0 && (
-                            <p className="task-dashboard__empty">No tasks here</p>
-                        )}
-                    </div>
-                ))}
-            </div>
-        </section>
+    <section className="task-dashboard">
+        <div
+            className={`task-dashboard__columns ${isDragging ? 'task-dashboard__columns--dragging' : ''}`}
+            onDragEnter={handleDragEnterDashboard}
+            onDragLeave={handleDragLeaveDashboard}
+        >
+            {columns.map(col => (
+                <div
+                    key={col.title}
+                    className="task-dashboard__column"
+                    onDragOver={handleDragOver}
+                    onDrop={e => handleDrop(e, col.title)}
+                >
+                    <h3 className="task-dashboard__column-header">{col.title}</h3>
+                    {col.items.map(task => (
+                        <TaskCard key={task.id} task={task} onEdit={onEdit} profile={profiles.find(p => p.id === task.assignedToId)}/>
+                    ))}
+                    {col.items.length === 0 && (
+                        <p className="task-dashboard__empty">No tasks here</p>
+                    )}
+                </div>
+            ))}
+        </div>
+    </section>
     );
 }
