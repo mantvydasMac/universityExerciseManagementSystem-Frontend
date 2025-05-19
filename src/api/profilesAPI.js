@@ -25,5 +25,18 @@ export const profilesAPI = {
             console.error('Error fetching profile:', error);
             throw error;
         }
+    },
+
+    async fetchProfilesByUser(userId) {
+        try {
+            const response = await fetch(`/v1/profiles/of-user/${userId}`);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch user profiles: ${response.statusText}`);
+            }
+            return response.json();
+        } catch (err) {
+            console.error('Error fetching profiles by user:', err);
+            throw err;
+        }
     }
 }
