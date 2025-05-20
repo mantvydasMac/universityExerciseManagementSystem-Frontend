@@ -8,6 +8,7 @@ import {taskAPI} from '../api/taskAPI';
 import './styles/TaskPage.css';
 import {profilesAPI} from "../api/profilesAPI";
 import {groupAPI} from "../api/groupAPI";
+import {FaUserCircle} from "react-icons/fa";
 
 export default function TaskPage() {
     let { groupId } = useParams();
@@ -123,8 +124,9 @@ export default function TaskPage() {
                     onClick={handleAddTaskClick}
                 />
                 <FloatingActionButton
+                    className="task-page__profile-fab"
                     ariaLabel="View profile"
-                    icon="O"
+                    icon={<FaUserCircle/>}
                     onClick={() => navigate(`/profile/${currentProfileId}`)}
                 />
             </div>
