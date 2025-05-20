@@ -7,6 +7,8 @@ import FloatingActionButton from '../components/essentials/FloatingActionButton'
 import { groupAPI } from '../api/groupAPI';
 import { GroupsContext } from '../context/GroupsContext';
 import './styles/GroupPage.css';
+import {invitationAPI} from "../api/invitationAPI";
+import InvitationsPanel from "../components/invitationManagement/Invitations";
 
 export default function GroupPage() {
     const { groups: ctxGroups, setGroups: setCtxGroups } = useContext(GroupsContext);
@@ -15,7 +17,9 @@ export default function GroupPage() {
     const [fabOpen, setFabOpen] = useState(false);
     const [showCreateModal, setShowCreateModal] = useState(false);
 
-    const currentUserId = 1; // TODO: Replace with actual user ID from authentication system
+    const [invitations, setInvitations] = useState([]);
+
+    const currentUserId = 4; // TODO: Replace with actual user ID from authentication system
 
     useEffect(() => {
         fetchGroups();
@@ -34,7 +38,7 @@ export default function GroupPage() {
             setLoading(false);
         }
     };
-
+    // TODO dabar yra changestatus pirmi pakeitimai ir antri changeStatus2
     const toggleFabMenu = e => {
         e.stopPropagation();
         setFabOpen(o => !o);
@@ -71,6 +75,7 @@ export default function GroupPage() {
                     <GroupDashboard groups={ctxGroups} />
                 )}
             </main>
+            <InvitationsPanel userId={currentUserId} onAccepted={fetchGroups} />
             <div className="fab-container" onClick={e => e.stopPropagation()}>
                 <OverflowMenu
                     open={fabOpen}

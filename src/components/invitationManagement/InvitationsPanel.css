@@ -1,0 +1,30 @@
+
+.invitation-table {
+    position: fixed;
+    bottom: 1rem;
+    left: 1rem;
+    background: white;
+    border: 1px solid #ccc;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.invitation-table table {
+    font-size: 0.85rem;
+    border-collapse: collapse;
+}
+
+.invitation-table th,
+.invitation-table td {
+    padding: 0.5rem;
+    text-align: left;
+}
+
+.invitation-table button {
+    margin-right: 0.5rem;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
