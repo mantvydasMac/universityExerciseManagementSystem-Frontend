@@ -1,0 +1,72 @@
+.profile-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: #f9f9f9;
+}
+
+.profile-page__customization {
+    width: 30%;
+    height: 100vh;
+    border-right-color: #282c34;
+    border-right-style: solid ;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profile-page__customization-header {
+    background-color: #282c34;
+    width: 100%;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profile-page__customization-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profile-page__avatar-icon {
+    height: 10rem;
+    width: 10rem;
+    color: #888;
+    margin-top: 1rem;
+    cursor: default;
+}
+
+.profile-page__param-box {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.profile-page__param-box-description {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 20px;
+
+    width: 18rem;
+    height: 5rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.profile-page__param-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.profile-page__joined-date {
+    color: #656565;
+    cursor: default;
+    margin-bottom: 2rem;
+}

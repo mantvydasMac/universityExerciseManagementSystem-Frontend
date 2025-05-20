@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { FaUserCircle, FaEllipsisV } from 'react-icons/fa';
 import OverflowMenu from '../essentials/OverflowMenu';
 import './styles/TaskCard.css';
+import {useNavigate} from "react-router-dom";
 
 export default function TaskCard({ task, onEdit, profile }) {
     const { isLate, isDue, status, assignedToId, assignedDate } = task;
     const lateClass      = isLate      ? ' task-card--late'      : '';
     const dueClass       = isDue       ? ' task-card--due'       : '';
     const completedClass = status === 'COMPLETED' ? ' task-card--completed' : '';
+    const navigate = useNavigate()
 
     const [menuOpen, setMenuOpen] = useState(false);
     const toggleMenu = e => {
@@ -27,6 +29,12 @@ export default function TaskCard({ task, onEdit, profile }) {
             danger: true
         }
     ];
+
+    const handleClickAssigneeProfile = () => {
+        if (assignedToId != null) {
+            navigate(`/profile/${assignedToId}`);
+        }
+    }
 
     return (
         <div
@@ -61,7 +69,7 @@ export default function TaskCard({ task, onEdit, profile }) {
                     <li><strong>Deadline:</strong> {task.deadline != null ? task.deadline : "Not set"}</li>
                 </ul>
                 <div className="task-card__avatar-container">
-                    <FaUserCircle className="task-card__avatar-icon" />
+                    <FaUserCircle className="task-card__avatar-icon" onClick={handleClickAssigneeProfile}/>
                     {assignedToId ? (
                         <div className="task-card__avatar-tooltip">
                             <div className="tooltip__name">{profile.username}</div>

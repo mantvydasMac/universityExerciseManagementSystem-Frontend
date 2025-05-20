@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { useParams } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import Header from '../components/essentials/Header';
 import TaskDashboard from '../components/taskManagement/TaskDashboard';
 import TaskModal from '../components/taskManagement/TaskModal';
@@ -19,6 +19,9 @@ export default function TaskPage() {
     const [showModal, setShowModal] = useState(false);
     const [currentTask, setCurrentTask] = useState(null);
     const [modalMode, setModalMode] = useState('create');
+    const navigate = useNavigate();
+
+    const currentProfileId = 1; // placeholder
 
 
     useEffect(() => {
@@ -118,6 +121,11 @@ export default function TaskPage() {
                     ariaLabel="Add task"
                     icon="+"
                     onClick={handleAddTaskClick}
+                />
+                <FloatingActionButton
+                    ariaLabel="View profile"
+                    icon="O"
+                    onClick={() => navigate(`/profile/${currentProfileId}`)}
                 />
             </div>
 
