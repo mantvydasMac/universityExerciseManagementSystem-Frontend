@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import Header from '../components/essentials/Header';
 import TaskDashboard from '../components/taskManagement/TaskDashboard';
 import TaskModal from '../components/taskManagement/TaskModal';
@@ -8,7 +8,6 @@ import { taskAPI } from '../api/taskAPI';
 import { GroupsContext } from '../context/GroupsContext';
 import './styles/TaskPage.css';
 import {profilesAPI} from "../api/profilesAPI";
-import {groupAPI} from "../api/groupAPI";
 import {FaUserCircle} from "react-icons/fa";
 
 export default function TaskPage() {
@@ -72,7 +71,7 @@ export default function TaskPage() {
             const updated = await taskAPI.updateTask(data);
             setTasks(ts => ts.map(t => (t.id === updated.id ? updated : t)));
         } else {
-            const createdTask = await taskAPI.createTask(taskData);
+            const createdTask = await taskAPI.createTask(data);
             setTasks(prev => [...prev, createdTask]);
         }
         setShowModal(false);
@@ -105,7 +104,7 @@ export default function TaskPage() {
                 task={currentTask}
                 profiles={profiles}
                 mode={modalMode}
-                groupId={currentGroupId}
+                groupId={groupId}
                 createdById={1} //placeholder
             />
         </div>

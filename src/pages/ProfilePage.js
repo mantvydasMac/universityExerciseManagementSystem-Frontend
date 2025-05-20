@@ -10,6 +10,8 @@ export default function ProfilePage() {
     let {profileId} = useParams();
     profileId = parseInt(profileId, 10);
 
+    const currentProfileId = 1; // placeholder change when authorization goes into effect !!!!!!
+
     const [profile, setProfile] = useState(null);
     const [isEditMode, setIsEditMode] = useState(false);
 
@@ -19,7 +21,7 @@ export default function ProfilePage() {
 
     const getProfile = async (profileId) => {
         try{
-            const profile = await profilesAPI.getProfileById(profileId);
+            const profile = await profilesAPI.fetchProfileById(profileId);
             setProfile(profile);
         }
         catch(error) {
@@ -62,7 +64,9 @@ export default function ProfilePage() {
                                 <div className="profile-page__param-label">Role</div>
                                 <div className="profile-page__param-box">{profile.role}</div>
 
-                                <button onClick={toggleEditMode} className="profile-page__edit-button">Edit</button>
+                                {currentProfileId === profile.id &&
+                                    <button onClick={toggleEditMode} className="profile-page__edit-button">Edit</button>
+                                }
                             </>
                         ) : (
                             <ProfileUpdateForm

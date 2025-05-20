@@ -13,8 +13,8 @@
 }
 
 .profile-update-form__cancel-button {
-    background-color: #282c34;
-    color: white;
+    background-color: #c6cbdd;
+    color: black;
     border-radius: 5px;
     border: none;
     margin-top: 3rem;
@@ -25,13 +25,13 @@
 }
 
 .profile-update-form__cancel-button:hover {
-    background-color: #515867;
+    background-color: #dae0ef;
     cursor: pointer;
 }
 
 .profile-update-form__save-button {
-    background-color: #c6cbdd;
-    color: black;
+    background-color: #282c34;
+    color: white;
     border-radius: 5px;
     border: none;
     margin-top: 1rem;
@@ -42,7 +42,7 @@
 }
 
 .profile-update-form__save-button:hover {
-    background-color: #dae0ef;
+    background-color: #515867;
     cursor: pointer;
 }
 
