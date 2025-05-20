@@ -3,6 +3,7 @@ import React, {useEffect, useState} from "react";
 import {profilesAPI} from "../api/profilesAPI";
 import './styles/ProfilePage.css';
 import {FaUserCircle} from "react-icons/fa";
+import ProfileUpdateForm from "../components/profileManagement/ProfileUpdateForm";
 
 
 export default function ProfilePage() {
@@ -10,6 +11,7 @@ export default function ProfilePage() {
     profileId = parseInt(profileId, 10);
 
     const [profile, setProfile] = useState(null);
+    const [isEditMode, setIsEditMode] = useState(false);
 
     useEffect(() => {
         getProfile(profileId);
@@ -21,7 +23,21 @@ export default function ProfilePage() {
             setProfile(profile);
         }
         catch(error) {
-            console.error('Error loading group:', error);
+            console.error('Error loading profile:', error);
+        }
+    }
+
+    const toggleEditMode = () => {
+        setIsEditMode(!isEditMode);
+    }
+
+    const handleSubmit = async (updatedProfile) => {
+        try {
+            const profile = await profilesAPI.updateProfile(updatedProfile);
+            setProfile(profile);
+        }
+        catch (error) {
+            console.error('Error updating profile:', error)
         }
     }
 
@@ -33,21 +49,31 @@ export default function ProfilePage() {
                     <h2>Profile</h2>
                 </div>
 
+                {profile && (
+                    <div className="profile-page__customization-body">
+                        {!isEditMode ? (
+                            <>
+                                <FaUserCircle className="profile-page__avatar-icon"/>
+                                <div className="profile-page__joined-date">Joined: {profile.joinedDate}</div>
+                                <div className="profile-page__param-label">Username</div>
+                                <div className="profile-page__param-box">{profile.username}</div>
+                                <div className="profile-page__param-label">Description</div>
+                                <div className="profile-page__param-box-description">{profile.description}</div>
+                                <div className="profile-page__param-label">Role</div>
+                                <div className="profile-page__param-box">{profile.role}</div>
 
-                <div className="profile-page__customization-body">
-                    {profile && (
-                        <>
-                            <FaUserCircle className="profile-page__avatar-icon"/>
-                            <div className="profile-page__joined-date">Joined: {profile.joinedDate}</div>
-                            <div className="profile-page__param-label">Username</div>
-                            <div className="profile-page__param-box">{profile.username}</div>
-                            <div className="profile-page__param-label">Description</div>
-                            <div className="profile-page__param-box-description">{profile.description}</div>
-                            <div className="profile-page__param-label">Role</div>
-                            <div className="profile-page__param-box">{profile.role}</div>
-                        </>
-                    )}
-                </div>
+                                <button onClick={toggleEditMode} className="profile-page__edit-button">Edit</button>
+                            </>
+                        ) : (
+                            <ProfileUpdateForm
+                                profile={profile}
+                                toggleEditMode={toggleEditMode}
+                                onSubmit={handleSubmit}
+                            />
+                        )}
+                    </div>
+                )}
+
             </div>
         </div>
     );

@@ -6,7 +6,7 @@
 }
 
 .profile-page__customization {
-    width: 30%;
+    width: 40rem;
     height: 100vh;
     border-right-color: #282c34;
     border-right-style: solid ;
@@ -45,6 +45,8 @@
     border-radius: 8px;
     padding: 10px;
     margin-bottom: 20px;
+
+    font-size: 15px;
 }
 
 .profile-page__param-box-description {
@@ -58,6 +60,24 @@
     height: 5rem;
     overflow-y: auto;
     overflow-x: hidden;
+    font-size: 15px;
+}
+
+.profile-page__edit-button {
+    background-color: #282c34;
+    color: white;
+    border-radius: 5px;
+    border: none;
+    margin-top: 8rem;
+
+    font-size: large;
+    width: 5rem;
+    height: 3rem;
+}
+
+.profile-page__edit-button:hover {
+    background-color: #515867;
+    cursor: pointer;
 }
 
 .profile-page__param-label {
