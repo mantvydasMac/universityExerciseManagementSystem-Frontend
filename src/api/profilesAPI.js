@@ -13,19 +13,6 @@ export const profilesAPI = {
         }
     },
 
-    async getProfileById(profileId) {
-        try {
-            const response = await fetch(`/v1/profiles/${profileId}`);
-            if (!response.ok) {
-                throw new Error('Failed to get profile');
-            }
-            return await response.json();
-        } catch (error) {
-            console.error('Error getting profile:', error);
-            throw error;
-        }
-    },
-
     async updateProfile(profile) {
         try {
             const response = await fetch(`/v1/profiles`, {
@@ -45,6 +32,20 @@ export const profilesAPI = {
 
         } catch (error) {
             console.error('Error updating profile:', error);
+            throw error;
+        }
+    },
+
+    async fetchProfileById(profileId) {
+        try {
+            const response = await fetch(`/v1/profiles/${profileId}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch profile');
+            }
+            return await response.json();
+
+        } catch (error) {
+            console.error('Error fetching profile:', error);
             throw error;
         }
     }

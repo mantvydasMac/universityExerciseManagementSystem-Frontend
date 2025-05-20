@@ -8,7 +8,9 @@ export default function TaskModal({
                                       onSubmit,
                                       task = {},
                                       profiles = [],
-                                      mode = 'create'
+                                      mode = 'create',
+                                      groupId,
+                                      createdById
                                   }) {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
@@ -55,16 +57,15 @@ export default function TaskModal({
             console.log(updated);
             onSubmit(updated);
         } else {
-            const todayISO = new Date().toISOString().slice(0, 10);
             const newTask = {
                 title,
                 description,
-                deadline,
-                assignedToId,
-                createdAt: todayISO,
-                assignedAt: todayISO,
-                status: 'To Do'
+                deadline: deadline === "" ? null : deadline,
+                assignedToId: assignedToId === -1 ? null : assignedToId,
+                groupId,
+                createdById
             };
+            console.log(newTask);
             onSubmit(newTask);
         }
         onClose();
