@@ -9,6 +9,7 @@ import { GroupsContext } from '../context/GroupsContext';
 import './styles/GroupPage.css';
 import {invitationAPI} from "../api/invitationAPI";
 import InvitationsPanel from "../components/invitationManagement/Invitations";
+import CreateProfileModal from "../components/profileManagement/CreateProfileModal";
 
 export default function GroupPage() {
     const { groups: ctxGroups, setGroups: setCtxGroups } = useContext(GroupsContext);
@@ -19,7 +20,10 @@ export default function GroupPage() {
 
     const [invitations, setInvitations] = useState([]);
 
-    const currentUserId = 4; // TODO: Replace with actual user ID from authentication system
+    const [showProfileModal, setShowProfileModal] = useState(false);
+    const [joinedGroupId, setJoinedGroupId] = useState(null);
+
+    const currentUserId = 5; // TODO: Replace with actual user ID from authentication system
 
     useEffect(() => {
         fetchGroups();
@@ -38,7 +42,21 @@ export default function GroupPage() {
             setLoading(false);
         }
     };
-    // TODO dabar yra changestatus pirmi pakeitimai ir antri changeStatus2
+
+    // const fetchJoinedGroup = async (joinedGroupId) => {
+    //     try {
+    //         setLoading(true);
+    //         const joinedGroup = await groupAPI.getGroupById(joinedGroupId);
+    //         setCtxGroups(prev => [...prev, joinedGroup]);
+    //         setError(null);
+    //     } catch (err) {
+    //         console.error('Error loading joined group:', err);
+    //         setError('Failed to load joined group');
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+
     const toggleFabMenu = e => {
         e.stopPropagation();
         setFabOpen(o => !o);
@@ -63,6 +81,11 @@ export default function GroupPage() {
         }
     };
 
+    const handleProfileCreated = () => {
+        setShowProfileModal(false);
+        fetchGroups();
+    };
+
     return (
         <div className="group-page" onClick={closeFabMenu}>
             <Header title="Your groups:" />
@@ -75,7 +98,14 @@ export default function GroupPage() {
                     <GroupDashboard groups={ctxGroups} />
                 )}
             </main>
-            <InvitationsPanel userId={currentUserId} onAccepted={fetchGroups} />
+            <InvitationsPanel
+                userId={currentUserId}
+                onAccepted={(joinedGroupId) => {
+                    // setJoinedGroupId(joinedGroupId);
+                    setJoinedGroupId(joinedGroupId);
+                    setShowProfileModal(true);
+                }}
+            />
             <div className="fab-container" onClick={e => e.stopPropagation()}>
                 <OverflowMenu
                     open={fabOpen}
@@ -91,6 +121,13 @@ export default function GroupPage() {
                 show={showCreateModal}
                 onClose={() => setShowCreateModal(false)}
                 onCreate={handleCreateGroup}
+            />
+            <CreateProfileModal
+                show={showProfileModal}
+                groupId={joinedGroupId}
+                userId={currentUserId}
+                onClose={() => setShowProfileModal(false)}
+                onCreate={handleProfileCreated}
             />
         </div>
     );

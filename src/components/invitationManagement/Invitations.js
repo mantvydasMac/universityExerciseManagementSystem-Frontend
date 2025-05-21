@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { invitationAPI } from '../../api/invitationAPI';
-import './InvitationsPanel.css'; // optional CSS file for isolated styles
+import './InvitationsPanel.css';
 
 export default function InvitationsPanel({ userId, onAccepted }) {
     const [invitations, setInvitations] = useState([]);
@@ -20,9 +20,10 @@ export default function InvitationsPanel({ userId, onAccepted }) {
 
     const handleAccept = async (id) => {
         try {
-            await invitationAPI.acceptInvitation(id);
+            const response = await invitationAPI.acceptInvitation(id);
             setInvitations(prev => prev.filter(inv => inv.id !== id));
-            onAccepted(); // notify parent to refresh groups
+            console.log(response);
+            onAccepted(response);
         } catch (err) {
             console.error('Error accepting invitation:', err);
         }
@@ -43,18 +44,13 @@ export default function InvitationsPanel({ userId, onAccepted }) {
         <div className="invitation-table">
             <p>You received an invite!</p>
             <table>
-                <thead>
-                <tr>
-                    <th>From</th>
-                    <th>Received</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
                 <tbody>
                 {invitations.map(inv => (
                     <tr key={inv.id}>
                         <td>{inv.inviterName}</td>
-                        <td>{new Date(inv.createdAt).toLocaleDateString()}</td>
+                        <td>has invited you to join group: </td>
+                        <td>{inv.groupName}</td>
+                        <td>at :{new Date(inv.createdAt).toLocaleDateString()}</td>
                         <td>
                             <button onClick={() => handleAccept(inv.id)}>Accept</button>
                             <button onClick={() => handleDecline(inv.id)}>Decline</button>
