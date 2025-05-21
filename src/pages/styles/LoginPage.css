@@ -1,0 +1,11 @@
+.login-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.login-page__main {
+    flex: 1;
+    padding: 1rem 0;
+    background: #f9f9f9;
+}

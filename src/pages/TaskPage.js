@@ -8,12 +8,14 @@ import { taskAPI } from '../api/taskAPI';
 import { profilesAPI } from '../api/profilesAPI';
 import { GroupsContext } from '../context/GroupsContext';
 import './styles/TaskPage.css';
+import {authAPI} from "../api/authAPI";
 
 export default function TaskPage() {
     const { groupId } = useParams();
     const { groups } = useContext(GroupsContext);
 
     const group = groups.find(g => g.id === parseInt(groupId, 10));
+    const currentUserId = authAPI.getUserId();
     const title = group ? `${group.name} tasks:` : 'Tasks:';
 
     const [tasks, setTasks] = useState([]);
@@ -66,7 +68,7 @@ export default function TaskPage() {
             const updated = await taskAPI.updateTask(data);
             setTasks(ts => ts.map(t => (t.id === updated.id ? updated : t)));
         } else {
-            const createdTask = await taskAPI.createTask(taskData);
+            const createdTask = await taskAPI.createTask(data);
             setTasks(prev => [...prev, createdTask]);
         }
         setShowModal(false);
@@ -93,8 +95,8 @@ export default function TaskPage() {
                 task={currentTask}
                 profiles={profiles}
                 mode={modalMode}
-                groupId={currentGroupId}
-                createdById={1} //placeholder
+                groupId={groupId}
+                createdById={currentUserId}
             />
         </div>
     );
