@@ -17,5 +17,23 @@ export const invitationAPI = {
         });
         if (!res.ok) throw new Error('Failed to decline invitation');
         return await res.text();
-    }
+    },
+    sendGroupInvitation: async ({ email, groupId, invitedBy })=> {
+        const response = await fetch('/v1/invitations/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                inviteeEmail: email,
+                groupId,
+                inviterId: invitedBy,
+            }),
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText || 'Failed to send invitation');
+        }
+
+        return await response.json();
+    },
 };
