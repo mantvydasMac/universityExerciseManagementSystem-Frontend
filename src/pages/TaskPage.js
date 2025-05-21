@@ -4,12 +4,13 @@ import Header from '../components/essentials/Header';
 import TaskDashboard from '../components/taskManagement/TaskDashboard';
 import TaskModal from '../components/taskManagement/TaskModal';
 import FloatingActionButton from '../components/essentials/FloatingActionButton';
+import ProfileModal from '../components/profileManagement/ProfileModal';
 import { taskAPI } from '../api/taskAPI';
 import { groupAPI } from '../api/groupAPI';
+import { profilesAPI } from '../api/profilesAPI';
 import { GroupsContext } from '../context/GroupsContext';
+import { FaUserCircle } from 'react-icons/fa';
 import './styles/TaskPage.css';
-import {profilesAPI} from "../api/profilesAPI";
-import {FaUserCircle} from "react-icons/fa";
 
 export default function TaskPage() {
     const { groupId } = useParams();
@@ -22,9 +23,9 @@ export default function TaskPage() {
     const [tasks, setTasks] = useState([]);
     const [profiles, setProfiles] = useState([]);
     const [showModal, setShowModal] = useState(false);
+    const [showProfileModal, setShowProfileModal] = useState(false);
     const [currentTask, setCurrentTask] = useState(null);
     const [modalMode, setModalMode] = useState('create');
-    const navigate = useNavigate();
 
     const currentProfileId = 1; // placeholder
 
@@ -94,6 +95,15 @@ export default function TaskPage() {
         setShowModal(false);
     };
 
+    const handleOpenProfile = e => {
+        e.stopPropagation();
+        setShowProfileModal(true);
+    };
+
+    const handleCloseProfile = () => {
+        setShowProfileModal(false);
+    };
+
     return (
         <div className="task-page" onClick={() => showModal && handleCloseModal()}>
             <Header title={`${groupName} tasks:`} />
@@ -105,20 +115,27 @@ export default function TaskPage() {
                 <FloatingActionButton
                     className="task-page__profile-fab"
                     ariaLabel="View profile"
-                    icon={<FaUserCircle/>}
-                    onClick={() => navigate(`/profile/${currentProfileId}`)}
+                    icon={<FaUserCircle />}
+                    onClick={handleOpenProfile}
                 />
             </div>
-            <TaskModal
-                show={showModal}
-                onClose={handleCloseModal}
-                onSubmit={handleSubmitTask}
-                task={currentTask}
-                profiles={profiles}
-                mode={modalMode}
-                groupId={groupId}
-                createdById={1} //placeholder
-            />
+
+            {showModal && (
+                <TaskModal
+                    show={showModal}
+                    onClose={handleCloseModal}
+                    onSubmit={handleSubmitTask}
+                    task={currentTask}
+                    profiles={profiles}
+                    mode={modalMode}
+                    groupId={gid}
+                    createdById={currentProfileId}
+                />
+            )}
+
+            {showProfileModal && (
+                <ProfileModal profileId={currentProfileId} onClose={handleCloseProfile} />
+            )}
         </div>
     );
 }
