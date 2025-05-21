@@ -1,14 +1,15 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import Header from '../components/essentials/Header';
 import TaskDashboard from '../components/taskManagement/TaskDashboard';
 import TaskModal from '../components/taskManagement/TaskModal';
 import FloatingActionButton from '../components/essentials/FloatingActionButton';
 import { taskAPI } from '../api/taskAPI';
-import { profilesAPI } from '../api/profilesAPI';
 import { groupAPI } from '../api/groupAPI';
 import { GroupsContext } from '../context/GroupsContext';
 import './styles/TaskPage.css';
+import {profilesAPI} from "../api/profilesAPI";
+import {FaUserCircle} from "react-icons/fa";
 
 export default function TaskPage() {
     const { groupId } = useParams();
@@ -23,6 +24,10 @@ export default function TaskPage() {
     const [showModal, setShowModal] = useState(false);
     const [currentTask, setCurrentTask] = useState(null);
     const [modalMode, setModalMode] = useState('create');
+    const navigate = useNavigate();
+
+    const currentProfileId = 1; // placeholder
+
 
     useEffect(() => {
         if (contextGroup) {
@@ -97,6 +102,12 @@ export default function TaskPage() {
             </main>
             <div className="fab-container" onClick={e => e.stopPropagation()}>
                 <FloatingActionButton ariaLabel="Add task" icon="+" onClick={handleAddTaskClick} />
+                <FloatingActionButton
+                    className="task-page__profile-fab"
+                    ariaLabel="View profile"
+                    icon={<FaUserCircle/>}
+                    onClick={() => navigate(`/profile/${currentProfileId}`)}
+                />
             </div>
             <TaskModal
                 show={showModal}

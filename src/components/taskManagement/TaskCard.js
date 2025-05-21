@@ -4,12 +4,14 @@ import OverflowMenu from '../essentials/OverflowMenu';
 import CommentModal from './CommentModal';
 import { taskAPI } from '../../api/taskAPI';
 import './styles/TaskCard.css';
+import {useNavigate} from "react-router-dom";
 
 export default function TaskCard({ task, onEdit, onDelete, profile }) {
     const { isLate, isDue, status, assignedToId, assignedDate } = task;
     const lateClass      = isLate      ? ' task-card--late'      : '';
     const dueClass       = isDue       ? ' task-card--due'       : '';
     const completedClass = status === 'COMPLETED' ? ' task-card--completed' : '';
+    const navigate = useNavigate()
 
     const [menuOpen, setMenuOpen] = useState(false);
     const [showCommentModal, setShowCommentModal] = useState(false);
@@ -48,6 +50,12 @@ export default function TaskCard({ task, onEdit, onDelete, profile }) {
         }
     ];
 
+    const handleClickAssigneeProfile = () => {
+        if (assignedToId != null) {
+            navigate(`/profile/${assignedToId}`);
+        }
+    }
+
     return (
         <>
             <div
@@ -73,7 +81,7 @@ export default function TaskCard({ task, onEdit, onDelete, profile }) {
 
                 <div className="task-card__header">
                     <div className="task-card__avatar-container">
-                        <FaUserCircle className="task-card__avatar-icon" />
+                        <FaUserCircle className="task-card__avatar-icon" onClick={handleClickAssigneeProfile} />
                         {assignedToId ? (
                             <div className="task-card__avatar-tooltip">
                                 <div className="tooltip__name">{profile.username}</div>
