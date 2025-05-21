@@ -83,7 +83,7 @@ export default function TaskPage() {
             const updated = await taskAPI.updateTask(data);
             setTasks(ts => ts.map(t => (t.id === updated.id ? updated : t)));
         } else {
-            const createdTask = await taskAPI.createTask(taskData);
+            const createdTask = await taskAPI.createTask(data);
             setTasks(prev => [...prev, createdTask]);
         }
         setShowModal(false);
@@ -105,7 +105,7 @@ export default function TaskPage() {
                 task={currentTask}
                 profiles={profiles}
                 mode={modalMode}
-                groupId={currentGroupId}
+                groupId={groupId}
                 createdById={1} //placeholder
             />
         </div>
