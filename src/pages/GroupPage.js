@@ -6,6 +6,7 @@ import OverflowMenu from '../components/essentials/OverflowMenu';
 import FloatingActionButton from '../components/essentials/FloatingActionButton';
 import { groupAPI } from '../api/groupAPI';
 import { GroupsContext } from '../context/GroupsContext';
+import TimelineView from '../components/timeline/TimelineView';
 import './styles/GroupPage.css';
 
 export default function GroupPage() {
@@ -18,22 +19,21 @@ export default function GroupPage() {
     const currentUserId = 1; // TODO: Replace with actual user ID from authentication system
 
     useEffect(() => {
-        fetchGroups();
-    }, []);
-
-    const fetchGroups = async () => {
-        try {
-            setLoading(true);
-            const fetched = await groupAPI.getUserGroups(currentUserId);
-            setCtxGroups(fetched);
-            setError(null);
-        } catch (err) {
-            console.error('Error loading groups:', err);
-            setError('Failed to load groups');
-        } finally {
-            setLoading(false);
+        async function loadGroups() {
+            try {
+                setLoading(true);
+                const fetched = await groupAPI.getUserGroups(currentUserId);
+                setCtxGroups(fetched);
+                setError(null);
+            } catch (err) {
+                console.error('Error loading groups:', err);
+                setError('Failed to load groups');
+            } finally {
+                setLoading(false);
+            }
         }
-    };
+        loadGroups();
+    }, [currentUserId, setCtxGroups]);
 
     const toggleFabMenu = e => {
         e.stopPropagation();
@@ -68,7 +68,10 @@ export default function GroupPage() {
                 ) : error ? (
                     <p className="error-message">{error}</p>
                 ) : (
-                    <GroupDashboard groups={ctxGroups} />
+                    <>
+                        <TimelineView groups={ctxGroups} currentUserId={currentUserId} />
+                        <GroupDashboard groups={ctxGroups} />
+                    </>
                 )}
             </main>
             <div className="fab-container" onClick={e => e.stopPropagation()}>

@@ -5,6 +5,7 @@ import TaskDashboard from '../components/taskManagement/TaskDashboard';
 import TaskModal from '../components/taskManagement/TaskModal';
 import FloatingActionButton from '../components/essentials/FloatingActionButton';
 import { taskAPI } from '../api/taskAPI';
+import { groupAPI } from '../api/groupAPI';
 import { GroupsContext } from '../context/GroupsContext';
 import './styles/TaskPage.css';
 import {profilesAPI} from "../api/profilesAPI";
@@ -12,11 +13,12 @@ import {FaUserCircle} from "react-icons/fa";
 
 export default function TaskPage() {
     const { groupId } = useParams();
+    const gid = parseInt(groupId, 10);
+
     const { groups } = useContext(GroupsContext);
+    const contextGroup = groups.find(g => g.id === gid);
 
-    const group = groups.find(g => g.id === parseInt(groupId, 10));
-    const title = group ? `${group.name} tasks:` : 'Tasks:';
-
+    const [groupName, setGroupName] = useState(contextGroup?.name || '');
     const [tasks, setTasks] = useState([]);
     const [profiles, setProfiles] = useState([]);
     const [showModal, setShowModal] = useState(false);
@@ -28,28 +30,43 @@ export default function TaskPage() {
 
 
     useEffect(() => {
-        if (!group) return;
-        fetchTasks(group.id);
-        fetchProfiles(group.id);
-    }, [group]);
-
-    const fetchTasks = async gid => {
-        try {
-            const fetchedTasks = await taskAPI.fetchTasksOfGroup(gid);
-            setTasks(fetchedTasks);
-        } catch (err) {
-            console.error('Error loading tasks:', err);
+        if (contextGroup) {
+            setGroupName(contextGroup.name);
+        } else if (gid) {
+            (async () => {
+                try {
+                    const grp = await groupAPI.fetchGroupById(gid);
+                    setGroupName(grp.name);
+                } catch (_) {
+                    setGroupName(`Group #${gid}`);
+                }
+            })();
         }
-    };
+    }, [contextGroup, gid]);
 
-    const fetchProfiles = async gid => {
-        try {
-            const fetchedProfiles = await profilesAPI.fetchProfilesOfGroup(gid);
-            setProfiles(fetchedProfiles);
-        } catch (err) {
-            console.error('Error loading profiles:', err);
-        }
-    };
+    useEffect(() => {
+        if (!gid) return;
+        (async () => {
+            try {
+                const fetched = await taskAPI.fetchTasksOfGroup(gid);
+                setTasks(fetched);
+            } catch (err) {
+                console.error('Error loading tasks:', err);
+            }
+        })();
+    }, [gid]);
+
+    useEffect(() => {
+        if (!gid) return;
+        (async () => {
+            try {
+                const fetched = await profilesAPI.fetchProfilesOfGroup(gid);
+                setProfiles(fetched);
+            } catch (err) {
+                console.error('Error loading profiles:', err);
+            }
+        })();
+    }, [gid]);
 
     const handleAddTaskClick = e => {
         e.stopPropagation();
@@ -78,13 +95,8 @@ export default function TaskPage() {
     };
 
     return (
-        <div
-            className="task-page"
-            onClick={() => {
-                if (showModal) handleCloseModal();
-            }}
-        >
-            <Header title={title} />
+        <div className="task-page" onClick={() => showModal && handleCloseModal()}>
+            <Header title={`${groupName} tasks:`} />
             <main className="task-page__main">
                 <TaskDashboard tasks={tasks} profiles={profiles} onEdit={handleEditTask} />
             </main>
