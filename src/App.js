@@ -1,9 +1,10 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { authAPI } from './api/authAPI';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
 import GroupPage from './pages/GroupPage';
 import TaskPage from './pages/TaskPage';
 import LoginPage from './pages/LoginPage';
+import ProfilePage from "./pages/ProfilePage";
 import { GroupsProvider } from "./context/GroupsContext";
 
 const PrivateRoute = ({ children }) => {
@@ -30,6 +31,14 @@ function App() {
                         element={
                             <PrivateRoute>
                                 <TaskPage />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/profile/:profileId"
+                        element={
+                            <PrivateRoute>
+                                <ProfilePage />
                             </PrivateRoute>
                         }
                     />

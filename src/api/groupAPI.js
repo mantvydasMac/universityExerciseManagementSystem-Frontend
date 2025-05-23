@@ -16,6 +16,20 @@ export const groupAPI = {
         }
     },
 
+    async getGroupById(groupId) {
+        try {
+            const response = await fetch(`/v1/groups/${groupId}`);
+            if (!response.ok) {
+                throw new Error('Failed to get group');
+            }
+            return await response.json();
+
+        } catch (error) {
+            console.error('Error getting group:', error);
+            throw error;
+        }
+    },
+
     async createGroup(name, creatorId) {
         try {
             const groupResponse = await fetch(`/v1/groups`, {
@@ -54,6 +68,19 @@ export const groupAPI = {
             return createdGroup;
         } catch (error) {
             console.error('Error in createGroup:', error);
+            throw error;
+        }
+    },
+
+    async fetchGroupById(groupId) {
+        try {
+            const response = await fetch(`/v1/groups/${groupId}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch group');
+            }
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching group:', error);
             throw error;
         }
     }
