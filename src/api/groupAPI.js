@@ -1,7 +1,11 @@
+import { authAPI } from './authAPI';
+
 export const groupAPI = {
     async getUserGroups(userId) {
         try {
-            const response = await fetch(`/v1/groups/of-user/${userId}`);
+            const response = await fetch(`/v1/groups/of-user/${userId}`, {
+                headers: authAPI.getAuthHeaders()
+            });
             if (!response.ok) {
                 throw new Error('Failed to fetch groups');
             }
@@ -16,11 +20,12 @@ export const groupAPI = {
         try {
             const response = await fetch(`/v1/groups/${groupId}`);
             if (!response.ok) {
-                throw new Error('Failed to fetch group');
+                throw new Error('Failed to get group');
             }
             return await response.json();
+
         } catch (error) {
-            console.error('Error fetching groups:', error);
+            console.error('Error getting group:', error);
             throw error;
         }
     },
@@ -29,9 +34,7 @@ export const groupAPI = {
         try {
             const groupResponse = await fetch(`/v1/groups`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: authAPI.getAuthHeaders(),
                 body: JSON.stringify({
                     name: name,
                     profileIds: [],
@@ -48,9 +51,7 @@ export const groupAPI = {
 
             const profileResponse = await fetch(`/v1/profiles`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: authAPI.getAuthHeaders(),
                 body: JSON.stringify({
                     userId: creatorId,
                     groupId: createdGroup.id,
@@ -67,6 +68,19 @@ export const groupAPI = {
             return createdGroup;
         } catch (error) {
             console.error('Error in createGroup:', error);
+            throw error;
+        }
+    },
+
+    async fetchGroupById(groupId) {
+        try {
+            const response = await fetch(`/v1/groups/${groupId}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch group');
+            }
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching group:', error);
             throw error;
         }
     }

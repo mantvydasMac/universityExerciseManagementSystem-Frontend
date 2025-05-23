@@ -1,8 +1,12 @@
+import { authAPI } from './authAPI';
+
 export const taskAPI = {
 
     async fetchTasksOfGroup(groupId) {
         try {
-            const response = await fetch(`/v1/tasks/of-group/${groupId}`);
+            const response = await fetch(`/v1/tasks/of-group/${groupId}`, {
+                headers: authAPI.getAuthHeaders()
+            });
             if (!response.ok) {
                 throw new Error('Failed to fetch tasks');
             }
@@ -19,9 +23,7 @@ export const taskAPI = {
 
             const response = await fetch(`/v1/tasks`, {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: authAPI.getAuthHeaders(),
                 body: JSON.stringify(task)
             });
 
@@ -42,9 +44,7 @@ export const taskAPI = {
         try {
             const response = await fetch(`/v1/tasks`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: authAPI.getAuthHeaders(),
                 body: JSON.stringify(task),
             });
 
@@ -58,6 +58,20 @@ export const taskAPI = {
             console.error('Error creating task:', error);
             throw error;
         }
-    }
+    },
 
-}
+    async deleteTask(taskId) {
+        try {
+            const response = await fetch(`/v1/tasks/${taskId}`, {
+                method: 'DELETE'
+            });
+            if (!response.ok) {
+                const errorData = await response.text();
+                throw new Error(`Failed to delete task: ${errorData}`);
+            }
+        } catch (error) {
+            console.error('Error deleting task:', error);
+            throw error;
+        }
+    }
+};

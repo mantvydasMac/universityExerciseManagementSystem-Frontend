@@ -5,7 +5,9 @@ import CreateGroupModal from '../components/groupManagement/CreateGroupModal';
 import OverflowMenu from '../components/essentials/OverflowMenu';
 import FloatingActionButton from '../components/essentials/FloatingActionButton';
 import { groupAPI } from '../api/groupAPI';
+import { authAPI } from '../api/authAPI'
 import { GroupsContext } from '../context/GroupsContext';
+import TimelineView from '../components/timeline/TimelineView';
 import './styles/GroupPage.css';
 import {invitationAPI} from "../api/invitationAPI";
 import InvitationsPanel from "../components/invitationManagement/Invitations";
@@ -18,44 +20,24 @@ export default function GroupPage() {
     const [fabOpen, setFabOpen] = useState(false);
     const [showCreateModal, setShowCreateModal] = useState(false);
 
-    const [invitations, setInvitations] = useState([]);
-
-    const [showProfileModal, setShowProfileModal] = useState(false);
-    const [joinedGroupId, setJoinedGroupId] = useState(null);
-
-    const currentUserId = 5; // TODO: Replace with actual user ID from authentication system
+    const currentUserId = authAPI.getUserId();
 
     useEffect(() => {
-        fetchGroups();
-    }, []);
-
-    const fetchGroups = async () => {
-        try {
-            setLoading(true);
-            const fetched = await groupAPI.getUserGroups(currentUserId);
-            setCtxGroups(fetched);
-            setError(null);
-        } catch (err) {
-            console.error('Error loading groups:', err);
-            setError('Failed to load groups');
-        } finally {
-            setLoading(false);
+        async function loadGroups() {
+            try {
+                setLoading(true);
+                const fetched = await groupAPI.getUserGroups(currentUserId);
+                setCtxGroups(fetched);
+                setError(null);
+            } catch (err) {
+                console.error('Error loading groups:', err);
+                setError('Failed to load groups');
+            } finally {
+                setLoading(false);
+            }
         }
-    };
-
-    // const fetchJoinedGroup = async (joinedGroupId) => {
-    //     try {
-    //         setLoading(true);
-    //         const joinedGroup = await groupAPI.getGroupById(joinedGroupId);
-    //         setCtxGroups(prev => [...prev, joinedGroup]);
-    //         setError(null);
-    //     } catch (err) {
-    //         console.error('Error loading joined group:', err);
-    //         setError('Failed to load joined group');
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
+        loadGroups();
+    }, [currentUserId, setCtxGroups]);
 
     const toggleFabMenu = e => {
         e.stopPropagation();
@@ -95,7 +77,10 @@ export default function GroupPage() {
                 ) : error ? (
                     <p className="error-message">{error}</p>
                 ) : (
-                    <GroupDashboard groups={ctxGroups} />
+                    <>
+                        <TimelineView groups={ctxGroups} currentUserId={currentUserId} />
+                        <GroupDashboard groups={ctxGroups} />
+                    </>
                 )}
             </main>
             <InvitationsPanel

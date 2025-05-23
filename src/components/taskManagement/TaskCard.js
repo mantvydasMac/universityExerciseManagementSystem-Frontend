@@ -2,13 +2,16 @@ import React, { useState } from 'react';
 import { FaUserCircle, FaEllipsisV, FaCommentAlt } from 'react-icons/fa';
 import OverflowMenu from '../essentials/OverflowMenu';
 import CommentModal from './CommentModal';
+import { taskAPI } from '../../api/taskAPI';
 import './styles/TaskCard.css';
+import {useNavigate} from "react-router-dom";
 
-export default function TaskCard({ task, onEdit, profile }) {
+export default function TaskCard({ task, onEdit, onDelete, profile }) {
     const { isLate, isDue, status, assignedToId, assignedDate } = task;
     const lateClass      = isLate      ? ' task-card--late'      : '';
     const dueClass       = isDue       ? ' task-card--due'       : '';
     const completedClass = status === 'COMPLETED' ? ' task-card--completed' : '';
+    const navigate = useNavigate()
 
     const [menuOpen, setMenuOpen] = useState(false);
     const [showCommentModal, setShowCommentModal] = useState(false);
@@ -24,8 +27,15 @@ export default function TaskCard({ task, onEdit, profile }) {
         setShowCommentModal(true);
     };
 
-    const handleCommentSubmit = (commentData) => {
-
+    const handleDeleteClick = async () => {
+        if (!window.confirm('Are you sure you want to delete this task?')) return;
+        try {
+            await taskAPI.deleteTask(task.id);
+            onDelete(task.id);
+        } catch (err) {
+            alert('Could not delete task. See console for details.');
+        }
+        setMenuOpen(false);
     };
 
     const items = [
@@ -35,10 +45,16 @@ export default function TaskCard({ task, onEdit, profile }) {
         },
         {
             label: 'Delete Task',
-            onClick: () => { setMenuOpen(false); },
+            onClick: handleDeleteClick,
             danger: true
         }
     ];
+
+    const handleClickAssigneeProfile = () => {
+        if (assignedToId != null) {
+            navigate(`/profile/${assignedToId}`);
+        }
+    }
 
     return (
         <>
@@ -65,7 +81,7 @@ export default function TaskCard({ task, onEdit, profile }) {
 
                 <div className="task-card__header">
                     <div className="task-card__avatar-container">
-                        <FaUserCircle className="task-card__avatar-icon" />
+                        <FaUserCircle className="task-card__avatar-icon" onClick={handleClickAssigneeProfile} />
                         {assignedToId ? (
                             <div className="task-card__avatar-tooltip">
                                 {/*<div className="tooltip__name">{profile.username}</div>*/}
@@ -103,7 +119,6 @@ export default function TaskCard({ task, onEdit, profile }) {
                 show={showCommentModal}
                 onClose={() => setShowCommentModal(false)}
                 taskId={task.id}
-                onSubmit={handleCommentSubmit}
                 task={task}
                 profile={profile}
             />
