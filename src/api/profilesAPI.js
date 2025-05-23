@@ -20,9 +20,7 @@ export const profilesAPI = {
         try {
             const response = await fetch(`/v1/profiles`, {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: authAPI.getAuthHeaders(),
                 body: JSON.stringify(profile)
             });
 
