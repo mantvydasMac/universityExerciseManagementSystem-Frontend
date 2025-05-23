@@ -1,0 +1,87 @@
+.profile-update-form__edit-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profile-update-form__avatar-icon {
+    height: 10rem;
+    width: 10rem;
+    color: #888;
+    margin-top: 1rem;
+    cursor: default;
+}
+
+.profile-update-form__cancel-button {
+    background-color: #c6cbdd;
+    color: black;
+    border-radius: 5px;
+    border: none;
+    margin-top: 3rem;
+
+    font-size: large;
+    width: 5rem;
+    height: 3rem;
+}
+
+.profile-update-form__cancel-button:hover {
+    background-color: #dae0ef;
+    cursor: pointer;
+}
+
+.profile-update-form__save-button {
+    background-color: #282c34;
+    color: white;
+    border-radius: 5px;
+    border: none;
+    margin-top: 1rem;
+
+    font-size: large;
+    width: 5rem;
+    height: 3rem;
+}
+
+.profile-update-form__save-button:hover {
+    background-color: #515867;
+    cursor: pointer;
+}
+
+.profile-update-form__joined-date {
+    color: #656565;
+    cursor: default;
+    margin-bottom: 2rem;
+}
+
+.profile-update-form__input-box {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 20px;
+
+    font-size: 15px;
+}
+
+.input-box-error {
+    border-color: #ec2222;
+}
+
+.profile-update-form__input-box-description {
+    width: 18rem;
+    height: 5rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    font-size: 15px;
+
+    font-family: Arial, serif;
+}
+
+.profile-update-form__input-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.profile-update-form__error-div{
+    color: #ec2222;
+    min-height: 1.5rem;
+}
