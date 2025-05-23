@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import Header from '../components/essentials/Header';
 import TaskDashboard from '../components/taskManagement/TaskDashboard';
 import TaskModal from '../components/taskManagement/TaskModal';
@@ -10,6 +10,7 @@ import { GroupsContext } from '../context/GroupsContext';
 import './styles/TaskPage.css';
 import {authAPI} from "../api/authAPI";
 import {FaUserCircle} from "react-icons/fa";
+import {groupAPI} from "../api/groupAPI";
 
 export default function TaskPage() {
     const { groupId } = useParams();

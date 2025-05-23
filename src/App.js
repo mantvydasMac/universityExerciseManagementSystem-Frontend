@@ -1,11 +1,12 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import {BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom';
 
 import GroupPage from './pages/GroupPage';
 import TaskPage from './pages/TaskPage';
 import LoginPage from './pages/LoginPage';
 import ProfilePage from "./pages/ProfilePage";
 import { GroupsProvider } from "./context/GroupsContext";
+import {authAPI} from "./api/authAPI";
 
 const PrivateRoute = ({ children }) => {
     const token = authAPI.getToken();
