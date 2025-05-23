@@ -54,7 +54,9 @@ export const profilesAPI = {
 
     async fetchProfilesByUser(userId) {
         try {
-            const response = await fetch(`/v1/profiles/of-user/${userId}`);
+            const response = await fetch(`/v1/profiles/of-user/${userId}`, {
+                headers: authAPI.getAuthHeaders(),
+            });
             if (!response.ok) {
                 throw new Error(`Failed to fetch user profiles: ${response.statusText}`);
             }

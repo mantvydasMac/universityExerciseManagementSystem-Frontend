@@ -63,7 +63,8 @@ export const taskAPI = {
     async deleteTask(taskId) {
         try {
             const response = await fetch(`/v1/tasks/${taskId}`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                headers: authAPI.getAuthHeaders()
             });
             if (!response.ok) {
                 const errorData = await response.text();
