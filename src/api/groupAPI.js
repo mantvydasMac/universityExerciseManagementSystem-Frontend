@@ -1,7 +1,11 @@
+import { authAPI } from './authAPI';
+
 export const groupAPI = {
     async getUserGroups(userId) {
         try {
-            const response = await fetch(`/v1/groups/of-user/${userId}`);
+            const response = await fetch(`/v1/groups/of-user/${userId}`, {
+                headers: authAPI.getAuthHeaders()
+            });
             if (!response.ok) {
                 throw new Error('Failed to fetch groups');
             }
@@ -14,7 +18,9 @@ export const groupAPI = {
 
     async getGroupById(groupId) {
         try {
-            const response = await fetch(`/v1/groups/${groupId}`);
+            const response = await fetch(`/v1/groups/${groupId}`, {
+                headers: authAPI.getAuthHeaders()
+            });
             if (!response.ok) {
                 throw new Error('Failed to get group');
             }
@@ -30,9 +36,7 @@ export const groupAPI = {
         try {
             const groupResponse = await fetch(`/v1/groups`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: authAPI.getAuthHeaders(),
                 body: JSON.stringify({
                     name: name,
                     profileIds: [],
@@ -49,9 +53,7 @@ export const groupAPI = {
 
             const profileResponse = await fetch(`/v1/profiles`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: authAPI.getAuthHeaders(),
                 body: JSON.stringify({
                     userId: creatorId,
                     groupId: createdGroup.id,
@@ -74,7 +76,9 @@ export const groupAPI = {
 
     async fetchGroupById(groupId) {
         try {
-            const response = await fetch(`/v1/groups/${groupId}`);
+            const response = await fetch(`/v1/groups/${groupId}`, {
+                headers: authAPI.getAuthHeaders()
+            });
             if (!response.ok) {
                 throw new Error('Failed to fetch group');
             }

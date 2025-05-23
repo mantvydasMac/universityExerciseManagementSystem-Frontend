@@ -1,7 +1,11 @@
+import { authAPI } from './authAPI';
+
 export const commentAPI = {
     async fetchCommentsOfTask(taskId) {
         try {
-            const response = await fetch(`/v1/comments/of-task/${taskId}`);
+            const response = await fetch(`/v1/comments/of-task/${taskId}`, {
+                headers: authAPI.getAuthHeaders()
+            });
             if (!response.ok) {
                 throw new Error('Failed to fetch comments');
             }
@@ -16,7 +20,7 @@ export const commentAPI = {
         try {
             const response = await fetch('/v1/comments', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: authAPI.getAuthHeaders(),
                 body: JSON.stringify(commentDto),
             });
             if (!response.ok) {

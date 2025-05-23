@@ -5,6 +5,7 @@ import CreateGroupModal from '../components/groupManagement/CreateGroupModal';
 import OverflowMenu from '../components/essentials/OverflowMenu';
 import FloatingActionButton from '../components/essentials/FloatingActionButton';
 import { groupAPI } from '../api/groupAPI';
+import { authAPI } from '../api/authAPI'
 import { GroupsContext } from '../context/GroupsContext';
 import TimelineView from '../components/timeline/TimelineView';
 import './styles/GroupPage.css';
@@ -16,7 +17,7 @@ export default function GroupPage() {
     const [fabOpen, setFabOpen] = useState(false);
     const [showCreateModal, setShowCreateModal] = useState(false);
 
-    const currentUserId = 1; // TODO: Replace with actual user ID from authentication system
+    const currentUserId = authAPI.getUserId();
 
     useEffect(() => {
         async function loadGroups() {

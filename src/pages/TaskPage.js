@@ -5,11 +5,12 @@ import TaskDashboard from '../components/taskManagement/TaskDashboard';
 import TaskModal from '../components/taskManagement/TaskModal';
 import FloatingActionButton from '../components/essentials/FloatingActionButton';
 import { taskAPI } from '../api/taskAPI';
-import { groupAPI } from '../api/groupAPI';
+import { profilesAPI } from '../api/profilesAPI';
 import { GroupsContext } from '../context/GroupsContext';
 import './styles/TaskPage.css';
-import {profilesAPI} from "../api/profilesAPI";
+import {authAPI} from "../api/authAPI";
 import {FaUserCircle} from "react-icons/fa";
+import {groupAPI} from "../api/groupAPI";
 
 export default function TaskPage() {
     const { groupId } = useParams();
@@ -17,6 +18,10 @@ export default function TaskPage() {
 
     const { groups } = useContext(GroupsContext);
     const contextGroup = groups.find(g => g.id === gid);
+
+    const group = groups.find(g => g.id === parseInt(groupId, 10));
+    const currentUserId = authAPI.getUserId();
+    const title = group ? `${group.name} tasks:` : 'Tasks:';
 
     const [groupName, setGroupName] = useState(contextGroup?.name || '');
     const [tasks, setTasks] = useState([]);
@@ -117,7 +122,7 @@ export default function TaskPage() {
                 profiles={profiles}
                 mode={modalMode}
                 groupId={groupId}
-                createdById={1} //placeholder
+                createdById={currentUserId}
             />
         </div>
     );

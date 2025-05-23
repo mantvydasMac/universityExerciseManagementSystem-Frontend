@@ -1,12 +1,15 @@
+import { authAPI } from './authAPI';
+
 export const profilesAPI = {
     async fetchProfilesOfGroup(groupId) {
         try {
-            const response = await fetch(`/v1/profiles/of-group/${groupId}`);
+            const response = await fetch(`/v1/profiles/of-group/${groupId}`, {
+                headers: authAPI.getAuthHeaders()
+            });
             if (!response.ok) {
                 throw new Error('Failed to fetch profiles');
             }
             return await response.json();
-
         } catch (error) {
             console.error('Error fetching profiles:', error);
             throw error;
@@ -17,9 +20,7 @@ export const profilesAPI = {
         try {
             const response = await fetch(`/v1/profiles`, {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: authAPI.getAuthHeaders(),
                 body: JSON.stringify(profile)
             });
 
@@ -38,12 +39,13 @@ export const profilesAPI = {
 
     async fetchProfileById(profileId) {
         try {
-            const response = await fetch(`/v1/profiles/${profileId}`);
+            const response = await fetch(`/v1/profiles/${profileId}`, {
+                headers: authAPI.getAuthHeaders()
+            });
             if (!response.ok) {
                 throw new Error('Failed to fetch profile');
             }
             return await response.json();
-
         } catch (error) {
             console.error('Error fetching profile:', error);
             throw error;
@@ -52,7 +54,9 @@ export const profilesAPI = {
 
     async fetchProfilesByUser(userId) {
         try {
-            const response = await fetch(`/v1/profiles/of-user/${userId}`);
+            const response = await fetch(`/v1/profiles/of-user/${userId}`, {
+                headers: authAPI.getAuthHeaders(),
+            });
             if (!response.ok) {
                 throw new Error(`Failed to fetch user profiles: ${response.statusText}`);
             }
@@ -62,4 +66,4 @@ export const profilesAPI = {
             throw err;
         }
     }
-}
+};
