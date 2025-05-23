@@ -18,7 +18,9 @@ export const groupAPI = {
 
     async getGroupById(groupId) {
         try {
-            const response = await fetch(`/v1/groups/${groupId}`);
+            const response = await fetch(`/v1/groups/${groupId}`, {
+                headers: authAPI.getAuthHeaders()
+            });
             if (!response.ok) {
                 throw new Error('Failed to get group');
             }
@@ -74,7 +76,9 @@ export const groupAPI = {
 
     async fetchGroupById(groupId) {
         try {
-            const response = await fetch(`/v1/groups/${groupId}`);
+            const response = await fetch(`/v1/groups/${groupId}`, {
+                headers: authAPI.getAuthHeaders()
+            });
             if (!response.ok) {
                 throw new Error('Failed to fetch group');
             }
