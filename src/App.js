@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { authAPI } from './api/authAPI';
 import GroupPage from './pages/GroupPage';
 import TaskPage from './pages/TaskPage';
-import Login from './pages/Login';
+import LoginPage from './pages/LoginPage';
 import { GroupsProvider } from "./context/GroupsContext";
 
 const PrivateRoute = ({ children }) => {
@@ -16,7 +16,7 @@ function App() {
         <GroupsProvider>
             <Router>
                 <Routes>
-                    <Route path="/login" element={<Login />} />
+                    <Route path="/login" element={<LoginPage />} />
                     <Route
                         path="/"
                         element={

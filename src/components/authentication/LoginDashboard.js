@@ -1,9 +1,10 @@
 import React from 'react';
+import './styles/LoginDashboard.css'
 
 const LoginDashboard = ({ loginData, setLoginData, onSubmit, error }) => {
     return (
-        <form onSubmit={onSubmit}>
-            <div className="mb-3">
+        <form onSubmit={onSubmit} className="login-form">
+            <div className="form-group">
                 <label htmlFor="email" className="form-label">Email Address</label>
                 <input
                     type="email"
@@ -16,7 +17,7 @@ const LoginDashboard = ({ loginData, setLoginData, onSubmit, error }) => {
                     }
                 />
             </div>
-            <div className="mb-3">
+            <div className="form-group">
                 <label htmlFor="password" className="form-label">Password</label>
                 <input
                     type="password"
@@ -34,9 +35,11 @@ const LoginDashboard = ({ loginData, setLoginData, onSubmit, error }) => {
                     {error}
                 </div>
             )}
-            <button type="submit" className="btn btn-primary w-100 mb-2">
-                Sign In
-            </button>
+            <div className="button-container">
+                <button type="submit" className="login-button">
+                    Sign In
+                </button>
+            </div>
         </form>
     );
 };
