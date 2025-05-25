@@ -52,15 +52,18 @@ export default function TaskPage() {
 
     useEffect(() => {
         if (!gid) return;
-        (async () => {
-            try {
-                const fetched = await taskAPI.fetchTasksOfGroup(gid);
-                setTasks(fetched);
-            } catch (err) {
-                console.error('Error loading tasks:', err);
-            }
-        })();
+        fetchTasks();
     }, [gid]);
+
+    const fetchTasks = async () => {
+        try {
+            const fetched = await taskAPI.fetchTasksOfGroup(gid);
+            setTasks(fetched);
+            return fetched;
+        } catch (err) {
+            console.error('Error loading tasks:', err);
+        }
+    }
 
     useEffect(() => {
         if (!gid) return;
@@ -91,13 +94,22 @@ export default function TaskPage() {
     };
     const handleSubmitTask = async data => {
         if (modalMode === 'edit') {
-            const updated = await taskAPI.updateTask(data);
-            setTasks(ts => ts.map(t => (t.id === updated.id ? updated : t)));
+            const result = await taskAPI.updateTask(data);
+
+            if(result.conflict) {
+                console.log("Optimistic locking occurred");
+                const newTasks = await fetchTasks(gid);
+                setCurrentTask(newTasks.find(t => t.id === currentTask.id));
+                return false;
+            } else {
+                const updated = result.data;
+                setTasks(ts => ts.map(t => (t.id === updated.id ? updated : t)));
+            }
         } else {
             const createdTask = await taskAPI.createTask(data);
             setTasks(prev => [...prev, createdTask]);
         }
-        setShowModal(false);
+        return true;
     };
 
     const handleOpenProfile = e => {
@@ -113,7 +125,7 @@ export default function TaskPage() {
         <div className="task-page" onClick={() => showModal && handleCloseModal()}>
             <Header title={`${groupName} tasks:`} />
             <main className="task-page__main">
-                <TaskDashboard tasks={tasks} profiles={profiles} onEdit={handleEditTask} />
+                <TaskDashboard tasks={tasks} profiles={profiles} onEdit={handleEditTask} fetchTasks={fetchTasks} />
             </main>
             <div className="fab-container" onClick={e => e.stopPropagation()}>
                 <FloatingActionButton ariaLabel="Add task" icon="+" onClick={handleAddTaskClick} />

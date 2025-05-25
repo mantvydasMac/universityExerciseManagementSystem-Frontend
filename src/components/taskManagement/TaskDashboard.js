@@ -3,7 +3,7 @@ import TaskCard from './TaskCard';
 import './styles/TaskDashboard.css';
 import {taskAPI} from "../../api/taskAPI";
 
-export default function TaskDashboard({ tasks, profiles, onEdit }) {
+export default function TaskDashboard({ tasks, profiles, onEdit, fetchTasks }) {
     const [taskList, setTaskList] = useState(tasks);
     const [isDragging, setIsDragging] = useState(false);
 
@@ -35,14 +35,19 @@ export default function TaskDashboard({ tasks, profiles, onEdit }) {
         const updatedTask = { ...taskToUpdate, status: newStatus };
 
         try {
-            const updatedFromServer = await taskAPI.updateTask(updatedTask);
-            setTaskList(prev =>
-                prev.map(t =>
-                    t.id.toString() === id
-                        ? updatedFromServer
-                        : t
-                )
-            );
+            const result = await taskAPI.updateTask(updatedTask);
+            if (result.conflict) {
+                fetchTasks();
+            } else {
+                const updatedFromServer = result.data;
+                setTaskList(prev =>
+                    prev.map(t =>
+                        t.id.toString() === id
+                            ? updatedFromServer
+                            : t
+                    )
+                );
+            }
         } catch (error) {
             console.error('Failed to update task status:', error);
         }
