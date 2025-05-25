@@ -42,7 +42,7 @@ export default function GroupDashboard({ groups }) {
                 setSuccessMessage('');
             }, 2000);
         } catch (error) {
-            setErrorMessage(error.message);
+            setErrorMessage("an error occured while sending invitation");
         }
     };
 
