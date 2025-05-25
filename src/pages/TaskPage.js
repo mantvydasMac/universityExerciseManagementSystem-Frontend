@@ -12,6 +12,7 @@ import { GroupsContext } from '../context/GroupsContext';
 import { FaUserCircle } from 'react-icons/fa';
 import './styles/TaskPage.css';
 import {authAPI} from "../api/authAPI";
+import Notification from "../components/essentials/Notification";
 
 export default function TaskPage() {
     const { groupId } = useParams();
@@ -31,6 +32,8 @@ export default function TaskPage() {
     const [showProfileModal, setShowProfileModal] = useState(false);
     const [currentTask, setCurrentTask] = useState(null);
     const [modalMode, setModalMode] = useState('create');
+    const [showNotification, setShowNotification] = useState(false);
+    const [notificationText, setNotificationText] = useState("");
 
     const currentProfileId = 1; // placeholder
 
@@ -97,9 +100,11 @@ export default function TaskPage() {
             const result = await taskAPI.updateTask(data);
 
             if(result.conflict) {
-                console.log("Optimistic locking occurred");
                 const newTasks = await fetchTasks(gid);
                 setCurrentTask(newTasks.find(t => t.id === currentTask.id));
+                setNotificationText("The task has already been updated.")
+                toggleNotification();
+
                 return false;
             } else {
                 const updated = result.data;
@@ -121,11 +126,22 @@ export default function TaskPage() {
         setShowProfileModal(false);
     };
 
+    const toggleNotification = () => {
+        setShowNotification(true);
+        setTimeout(() => setShowNotification(false), 3000); // Hide after 3s
+    };
+
     return (
         <div className="task-page" onClick={() => showModal && handleCloseModal()}>
             <Header title={`${groupName} tasks:`} />
             <main className="task-page__main">
-                <TaskDashboard tasks={tasks} profiles={profiles} onEdit={handleEditTask} fetchTasks={fetchTasks} />
+                <TaskDashboard tasks={tasks}
+                               profiles={profiles}
+                               onEdit={handleEditTask}
+                               fetchTasks={fetchTasks}
+                               toggleNotification={toggleNotification}
+                               setNotificationText={setNotificationText}
+                />
             </main>
             <div className="fab-container" onClick={e => e.stopPropagation()}>
                 <FloatingActionButton ariaLabel="Add task" icon="+" onClick={handleAddTaskClick} />
@@ -153,6 +169,8 @@ export default function TaskPage() {
             {showProfileModal && (
                 <ProfileModal profileId={currentProfileId} onClose={handleCloseProfile} />
             )}
+
+            <Notification visible={showNotification} text={notificationText}/>
         </div>
     );
 }

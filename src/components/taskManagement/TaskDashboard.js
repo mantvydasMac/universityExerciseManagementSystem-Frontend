@@ -3,7 +3,7 @@ import TaskCard from './TaskCard';
 import './styles/TaskDashboard.css';
 import {taskAPI} from "../../api/taskAPI";
 
-export default function TaskDashboard({ tasks, profiles, onEdit, fetchTasks }) {
+export default function TaskDashboard({ tasks, profiles, onEdit, fetchTasks, toggleNotification, setNotificationText }) {
     const [taskList, setTaskList] = useState(tasks);
     const [isDragging, setIsDragging] = useState(false);
 
@@ -38,6 +38,8 @@ export default function TaskDashboard({ tasks, profiles, onEdit, fetchTasks }) {
             const result = await taskAPI.updateTask(updatedTask);
             if (result.conflict) {
                 fetchTasks();
+                setNotificationText("Task has already been moved.");
+                toggleNotification();
             } else {
                 const updatedFromServer = result.data;
                 setTaskList(prev =>
