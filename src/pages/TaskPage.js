@@ -11,6 +11,7 @@ import { profilesAPI } from '../api/profilesAPI';
 import { GroupsContext } from '../context/GroupsContext';
 import { FaUserCircle } from 'react-icons/fa';
 import './styles/TaskPage.css';
+import {authAPI} from "../api/authAPI";
 
 export default function TaskPage() {
     const { groupId } = useParams();
@@ -18,6 +19,10 @@ export default function TaskPage() {
 
     const { groups } = useContext(GroupsContext);
     const contextGroup = groups.find(g => g.id === gid);
+
+    const group = groups.find(g => g.id === parseInt(groupId, 10));
+    const currentUserId = authAPI.getUserId();
+    const title = group ? `${group.name} tasks:` : 'Tasks:';
 
     const [groupName, setGroupName] = useState(contextGroup?.name || '');
     const [tasks, setTasks] = useState([]);
