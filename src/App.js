@@ -35,14 +35,6 @@ function App() {
                             </PrivateRoute>
                         }
                     />
-                    <Route
-                        path="/profile/:profileId"
-                        element={
-                            <PrivateRoute>
-                                <ProfilePage />
-                            </PrivateRoute>
-                        }
-                    />
                 </Routes>
             </Router>
         </GroupsProvider>

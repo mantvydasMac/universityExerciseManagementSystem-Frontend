@@ -1,0 +1,85 @@
+.profile-modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    opacity: 1;
+    z-index: 1000;
+}
+.profile-modal-overlay.fade-out {
+    pointer-events: none;
+}
+
+.profile-page--modal {
+    position: fixed;
+    top: 0; left: 0;
+    height: 100vh; width: 22rem;
+    background: #f9f9f9;
+    overflow-y: auto;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.3);
+    z-index: 1001;
+    display: flex; flex-direction: column;
+    transform: translateX(-100%);
+    animation: slideInPanel 0.15s ease-out forwards;
+}
+.profile-page--modal.slide-out {
+    animation: slideOutPanel 0.15s ease-in forwards;
+    pointer-events: none;
+}
+
+.profile-modal__close {
+    position: absolute;
+    top: 1rem; right: 1rem;
+    background: none; border: none;
+    font-size: 1.25rem; cursor: pointer;
+    color: #282c34;
+}
+
+.profile-page {
+    display: flex; flex-direction: column;
+    min-height: 100vh; background: #f9f9f9;
+}
+.profile-page__customization {
+    width: 100%; border-right: 1px solid #282c34;
+    display: flex; flex-direction: column; align-items: center;
+}
+.profile-page__customization-header {
+    background: #282c34; width: 100%; color: white;
+    display: flex; flex-direction: column; align-items: center;
+}
+.profile-page__customization-body {
+    display: flex; flex-direction: column; align-items: center;
+}
+.profile-page__avatar-icon {
+    height: 10rem; width: 10rem; color: #888;
+    margin-top: 1rem; cursor: default;
+}
+.profile-page__param-label { font-weight: bold; margin-bottom: 5px; }
+.profile-page__param-box,
+.profile-page__param-box-description {
+    background: #fff; border: 1px solid #ddd;
+    border-radius: 8px; padding: 10px; margin-bottom: 20px;
+    font-size: 15px;
+}
+.profile-page__param-box-description {
+    width: 18rem; height: 5rem;
+    overflow-y: auto; overflow-x: hidden;
+}
+.profile-page__joined-date {
+    color: #656565; cursor: default; margin-bottom: 2rem;
+}
+.profile-page__edit-button {
+    background: #282c34; color: white;
+    border-radius: 5px; border: none;
+    margin-top: 8rem; font-size: large;
+    width: 5rem; height: 3rem;
+}
+.profile-page__edit-button:hover {
+    background: #515867; cursor: pointer;
+}
+
+@keyframes slideInPanel {
+    from { transform: translateX(-100%); } to { transform: translateX(0); }
+}
+@keyframes slideOutPanel {
+    from { transform: translateX(0); } to { transform: translateX(-100%); }
+}

@@ -2,19 +2,19 @@ import React, { useState } from 'react';
 import { FaUserCircle, FaEllipsisV, FaCommentAlt } from 'react-icons/fa';
 import OverflowMenu from '../essentials/OverflowMenu';
 import CommentModal from './CommentModal';
+import ProfileModal from '../profileManagement/ProfileModal';
 import { taskAPI } from '../../api/taskAPI';
 import './styles/TaskCard.css';
-import {useNavigate} from "react-router-dom";
 
 export default function TaskCard({ task, onEdit, onDelete, profile }) {
     const { isLate, isDue, status, assignedToId, assignedDate } = task;
     const lateClass      = isLate      ? ' task-card--late'      : '';
     const dueClass       = isDue       ? ' task-card--due'       : '';
     const completedClass = status === 'COMPLETED' ? ' task-card--completed' : '';
-    const navigate = useNavigate()
 
     const [menuOpen, setMenuOpen] = useState(false);
     const [showCommentModal, setShowCommentModal] = useState(false);
+    const [showProfileModal, setShowProfileModal] = useState(false);
 
     const toggleMenu = e => {
         e.stopPropagation();
@@ -50,11 +50,16 @@ export default function TaskCard({ task, onEdit, onDelete, profile }) {
         }
     ];
 
-    const handleClickAssigneeProfile = () => {
+    const handleOpenProfileModal = e => {
+        e.stopPropagation();
         if (assignedToId != null) {
-            navigate(`/profile/${assignedToId}`);
+            setShowProfileModal(true);
         }
-    }
+    };
+
+    const handleCloseProfileModal = () => {
+        setShowProfileModal(false);
+    };
 
     return (
         <>
@@ -81,7 +86,10 @@ export default function TaskCard({ task, onEdit, onDelete, profile }) {
 
                 <div className="task-card__header">
                     <div className="task-card__avatar-container">
-                        <FaUserCircle className="task-card__avatar-icon" onClick={handleClickAssigneeProfile} />
+                        <FaUserCircle
+                            className="task-card__avatar-icon"
+                            onClick={handleOpenProfileModal}
+                        />
                         {assignedToId ? (
                             <div className="task-card__avatar-tooltip">
                                 {/*<div className="tooltip__name">{profile.username}</div>*/}
@@ -122,6 +130,13 @@ export default function TaskCard({ task, onEdit, onDelete, profile }) {
                 task={task}
                 profile={profile}
             />
+
+            {showProfileModal && assignedToId != null && (
+                <ProfileModal
+                    profileId={assignedToId}
+                    onClose={handleCloseProfileModal}
+                />
+            )}
         </>
     );
 }
