@@ -51,7 +51,8 @@ export default function TaskModal({
                 title,
                 description,
                 deadline: deadline === "" ? null : deadline,
-                assignedToId: assignedToId === -1 ? null : assignedToId
+                assignedToId: assignedToId === -1 ? null : assignedToId,
+                version: task.version
                 // status
             };
             console.log(updated);
