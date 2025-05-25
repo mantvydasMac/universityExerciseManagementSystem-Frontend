@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { invitationAPI } from '../../api/invitationAPI';
 import './InvitationsPanel.css';
 
-export default function InvitationsPanel({ userId, onAccepted }) {
+export default function InvitationsPanel({ userId, onAccept }) {
     const [invitations, setInvitations] = useState([]);
 
     useEffect(() => {
@@ -20,10 +20,9 @@ export default function InvitationsPanel({ userId, onAccepted }) {
 
     const handleAccept = async (id) => {
         try {
-            const response = await invitationAPI.acceptInvitation(id);
+            await invitationAPI.acceptInvitation(id);
             setInvitations(prev => prev.filter(inv => inv.id !== id));
-            console.log(response);
-            onAccepted(response);
+            onAccept()
         } catch (err) {
             console.error('Error accepting invitation:', err);
         }

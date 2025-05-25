@@ -4,24 +4,38 @@ import {profilesAPI} from "../api/profilesAPI";
 import './styles/ProfilePage.css';
 import {FaUserCircle} from "react-icons/fa";
 import ProfileUpdateForm from "../components/profileManagement/ProfileUpdateForm";
+import {authAPI} from "../api/authAPI";
 
 
 export default function ProfilePage() {
     let {profileId} = useParams();
     profileId = parseInt(profileId, 10);
 
-    const currentProfileId = 1; // placeholder change when authorization goes into effect !!!!!!
+    const currentUserId = authAPI.getUserId();
+    const [canEditProfile, setCanEditProfile] = useState(false);
 
     const [profile, setProfile] = useState(null);
     const [isEditMode, setIsEditMode] = useState(false);
 
     useEffect(() => {
         getProfile(profileId);
-    }, []);
+        checkIfCanEditProfile(profileId);
+    }, [profileId]);
+
+    const checkIfCanEditProfile = async (profileId) => {
+        try {
+            const profiles = await profilesAPI.fetchProfilesByUser(currentUserId);
+            const canEdit = profiles.some(profile => profile.id === profileId);
+            setCanEditProfile(canEdit);
+        } catch (error) {
+            console.error('Error checking profile edit permissions:', error);
+        }
+    }
 
     const getProfile = async (profileId) => {
         try{
             const profile = await profilesAPI.fetchProfileById(profileId);
+            console.log(profile);
             setProfile(profile);
         }
         catch(error) {
@@ -64,7 +78,7 @@ export default function ProfilePage() {
                                 <div className="profile-page__param-label">Role</div>
                                 <div className="profile-page__param-box">{profile.role}</div>
 
-                                {currentProfileId === profile.id &&
+                                {canEditProfile &&
                                     <button onClick={toggleEditMode} className="profile-page__edit-button">Edit</button>
                                 }
                             </>

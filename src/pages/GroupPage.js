@@ -9,9 +9,7 @@ import { authAPI } from '../api/authAPI'
 import { GroupsContext } from '../context/GroupsContext';
 import TimelineView from '../components/timeline/TimelineView';
 import './styles/GroupPage.css';
-import {invitationAPI} from "../api/invitationAPI";
 import InvitationsPanel from "../components/invitationManagement/Invitations";
-import CreateProfileModal from "../components/profileManagement/CreateProfileModal";
 
 export default function GroupPage() {
     const { groups: ctxGroups, setGroups: setCtxGroups } = useContext(GroupsContext);
@@ -22,22 +20,23 @@ export default function GroupPage() {
 
     const currentUserId = authAPI.getUserId();
 
-    useEffect(() => {
-        async function loadGroups() {
-            try {
-                setLoading(true);
-                const fetched = await groupAPI.getUserGroups(currentUserId);
-                setCtxGroups(fetched);
-                setError(null);
-            } catch (err) {
-                console.error('Error loading groups:', err);
-                setError('Failed to load groups');
-            } finally {
-                setLoading(false);
-            }
+    const loadGroups = async () => {
+        try {
+            setLoading(true);
+            const fetched = await groupAPI.getUserGroups(currentUserId);
+            setCtxGroups(fetched);
+            setError(null);
+        } catch (err) {
+            console.error('Error loading groups:', err);
+            setError('Failed to load groups');
+        } finally {
+            setLoading(false);
         }
+    };
+
+    useEffect(() => {
         loadGroups();
-    }, [currentUserId, setCtxGroups]);
+    }, [currentUserId]);
 
     const toggleFabMenu = e => {
         e.stopPropagation();
@@ -62,12 +61,6 @@ export default function GroupPage() {
             setLoading(false);
         }
     };
-
-    const handleProfileCreated = () => {
-        setShowProfileModal(false);
-        fetchGroups();
-    };
-
     return (
         <div className="group-page" onClick={closeFabMenu}>
             <Header title="Your groups:" />
@@ -85,11 +78,7 @@ export default function GroupPage() {
             </main>
             <InvitationsPanel
                 userId={currentUserId}
-                onAccepted={(joinedGroupId) => {
-                    // setJoinedGroupId(joinedGroupId);
-                    setJoinedGroupId(joinedGroupId);
-                    setShowProfileModal(true);
-                }}
+                onAccept={loadGroups}
             />
             <div className="fab-container" onClick={e => e.stopPropagation()}>
                 <OverflowMenu
@@ -106,13 +95,6 @@ export default function GroupPage() {
                 show={showCreateModal}
                 onClose={() => setShowCreateModal(false)}
                 onCreate={handleCreateGroup}
-            />
-            <CreateProfileModal
-                show={showProfileModal}
-                groupId={joinedGroupId}
-                userId={currentUserId}
-                onClose={() => setShowProfileModal(false)}
-                onCreate={handleProfileCreated}
             />
         </div>
     );

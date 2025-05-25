@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import GroupCard from './GroupCard';
 import './styles/GroupDashboard.css';
 import {invitationAPI} from "../../api/invitationAPI";
+import {authAPI} from "../../api/authAPI";
 
 export default function GroupDashboard({ groups }) {
     const [menuOpenFor, setMenuOpenFor] = useState(null);
@@ -14,7 +15,7 @@ export default function GroupDashboard({ groups }) {
     const toggleMenu = id => setMenuOpenFor(prev => (prev === id ? null : id));
     const closeMenu = () => setMenuOpenFor(null);
 
-    const userId = 5;
+    const currentUserId = authAPI.getUserId();
 
     const inviteToGroup = id => {
         setSelectedGroupId(id);
@@ -31,7 +32,7 @@ export default function GroupDashboard({ groups }) {
             await invitationAPI.sendGroupInvitation({
                 email: inviteEmail,
                 groupId: selectedGroupId,
-                invitedBy: userId,
+                invitedBy: currentUserId,
             });
 
             setSuccessMessage('Invitation sent!');

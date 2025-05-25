@@ -20,7 +20,7 @@ export default function TaskPage() {
     const contextGroup = groups.find(g => g.id === gid);
 
     const group = groups.find(g => g.id === parseInt(groupId, 10));
-    const currentUserId = authAPI.getUserId();
+    const currentUserId = Number(authAPI.getUserId());
     const title = group ? `${group.name} tasks:` : 'Tasks:';
 
     const [groupName, setGroupName] = useState(contextGroup?.name || '');
@@ -29,9 +29,8 @@ export default function TaskPage() {
     const [showModal, setShowModal] = useState(false);
     const [currentTask, setCurrentTask] = useState(null);
     const [modalMode, setModalMode] = useState('create');
+    const [currentProfileId, setCurrentProfileId] = useState(null);
     const navigate = useNavigate();
-
-    const currentProfileId = 1; // placeholder
 
 
     useEffect(() => {
@@ -67,11 +66,15 @@ export default function TaskPage() {
             try {
                 const fetched = await profilesAPI.fetchProfilesOfGroup(gid);
                 setProfiles(fetched);
+                const userProfile = fetched.find(p => p.userId === currentUserId);
+
+                setCurrentProfileId(userProfile?.id || null);
+
             } catch (err) {
                 console.error('Error loading profiles:', err);
             }
         })();
-    }, [gid]);
+    }, [gid, currentUserId]);
 
     const handleAddTaskClick = e => {
         e.stopPropagation();

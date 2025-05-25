@@ -60,7 +60,7 @@ export const authAPI = {
     },
 
     getUserId() {
-        return sessionStorage.getItem('userId');
+        return Number(sessionStorage.getItem('userId'));
     },
 
     getFirstName() {
