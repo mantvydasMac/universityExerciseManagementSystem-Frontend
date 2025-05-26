@@ -41,7 +41,6 @@ export default function TaskModal({
 
     const handleSubmit = async e => {
         e.preventDefault();
-        console.log(!title, !deadline, !assignedToId);
         if (!title || !assignedToId) return;
         let shouldClose;
 

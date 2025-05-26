@@ -102,13 +102,12 @@ export default function TaskPage() {
             if(result.conflict) {
                 const newTasks = await fetchTasks(gid);
                 setCurrentTask(newTasks.find(t => t.id === currentTask.id));
-                setNotificationText("The task has already been updated.")
-                toggleNotification();
+                flashNotification("The task has already been updated.");
 
                 return false;
             } else {
                 const updated = result.data;
-                setTasks(ts => ts.map(t => (t.id === updated.id ? updated : t)));
+                updateTasksWithNewTask(updated);
             }
         } else {
             const createdTask = await taskAPI.createTask(data);
@@ -116,6 +115,10 @@ export default function TaskPage() {
         }
         return true;
     };
+
+    const updateTasksWithNewTask = (task) => {
+        setTasks(ts => ts.map(t => (t.id === task.id ? task : t)));
+    }
 
     const handleOpenProfile = e => {
         e.stopPropagation();
@@ -126,9 +129,10 @@ export default function TaskPage() {
         setShowProfileModal(false);
     };
 
-    const toggleNotification = () => {
+    const flashNotification = (text, duration = 3000) => {
+        setNotificationText(text)
         setShowNotification(true);
-        setTimeout(() => setShowNotification(false), 3000); // Hide after 3s
+        setTimeout(() => setShowNotification(false), duration);
     };
 
     return (
@@ -139,8 +143,8 @@ export default function TaskPage() {
                                profiles={profiles}
                                onEdit={handleEditTask}
                                fetchTasks={fetchTasks}
-                               toggleNotification={toggleNotification}
-                               setNotificationText={setNotificationText}
+                               flashNotification={flashNotification}
+                               updateTasksWithNewTask={updateTasksWithNewTask}
                 />
             </main>
             <div className="fab-container" onClick={e => e.stopPropagation()}>
