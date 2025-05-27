@@ -9,6 +9,8 @@
     margin-bottom: 1rem;
     cursor: grab;
     position: relative;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .task-card__overflow {
@@ -69,6 +71,13 @@
     margin: 0;
     font-size: 0.95rem;
     color: #555;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
+    width: 100%;
+    white-space: normal;
+    padding-right: 1rem;
+    box-sizing: border-box;
 }
 
 .task-card__footer {
