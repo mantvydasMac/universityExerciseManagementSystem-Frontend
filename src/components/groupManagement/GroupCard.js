@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import OverflowMenu from '../../components/essentials/OverflowMenu';
 import './styles/GroupDashboard.css';
 
-export default function GroupCard({ group, isMenuOpen, toggleMenu, closeMenu, inviteToGroup }) {
+export default function GroupCard({ group, isMenuOpen, toggleMenu, closeMenu, inviteToGroup, handleDelete }) {
     const nameRef = useRef(null);
     const [isOverflowing, setIsOverflowing] = useState(false);
     const [slideDistance, setSlideDistance] = useState(0);
@@ -73,12 +73,25 @@ export default function GroupCard({ group, isMenuOpen, toggleMenu, closeMenu, in
                 <OverflowMenu
                     open={isMenuOpen === group.id}
                     items={[
-                        { label: 'Modify', onClick: closeMenu },
-                        { label: 'Invite to group', onClick: (e) => {
+                        {
+                            label: 'Invite to group',
+                            onClick: (e) => {
                                 e.stopPropagation();
                                 inviteToGroup(group.id);
-                            }},
-                        { label: 'Delete', onClick: closeMenu, danger: true },
+                                closeMenu();
+                            }
+                        },
+                        {
+                            label: 'Delete',
+                            onClick: (e) => {
+                                e.stopPropagation();
+                                if (window.confirm('Are you sure you want to delete this group?')) {
+                                    handleDelete(group.id);
+                                }
+                                closeMenu();
+                            },
+                            danger: true
+                        },
                     ]}
                 />
             </div>

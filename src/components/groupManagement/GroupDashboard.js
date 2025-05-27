@@ -3,8 +3,9 @@ import GroupCard from './GroupCard';
 import './styles/GroupDashboard.css';
 import {invitationAPI} from "../../api/invitationAPI";
 import {authAPI} from "../../api/authAPI";
+import {groupAPI} from "../../api/groupAPI";
 
-export default function GroupDashboard({ groups }) {
+export default function GroupDashboard({ groups, onDelete }) {
     const [menuOpenFor, setMenuOpenFor] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [selectedGroupId, setSelectedGroupId] = useState(null);
@@ -46,6 +47,15 @@ export default function GroupDashboard({ groups }) {
         }
     };
 
+    const handleDeleteGroup = async (groupId) => {
+        try {
+            await groupAPI.deleteGroup(groupId);
+            onDelete();
+        } catch (error) {
+            alert('Failed to delete group.');
+        }
+    };
+
     if (!groups || groups.length === 0) {
         return <p className="group-list__empty">You currently have no groups. Click + in bottom right to create or join group!</p>;
     }
@@ -59,7 +69,8 @@ export default function GroupDashboard({ groups }) {
                     isMenuOpen={menuOpenFor}
                     toggleMenu={toggleMenu}
                     closeMenu={closeMenu}
-                    inviteToGroup={() => inviteToGroup(g.id)}
+                    inviteToGroup={inviteToGroup}
+                    handleDelete={handleDeleteGroup}
                 />
             ))}
 

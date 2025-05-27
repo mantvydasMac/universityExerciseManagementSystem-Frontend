@@ -72,7 +72,7 @@ export default function GroupPage() {
                 ) : (
                     <>
                         <TimelineView groups={ctxGroups} currentUserId={currentUserId} />
-                        <GroupDashboard groups={ctxGroups} />
+                        <GroupDashboard groups={ctxGroups} onDelete={loadGroups} />
                     </>
                 )}
             </main>
