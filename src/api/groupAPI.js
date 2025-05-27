@@ -68,5 +68,29 @@ export const groupAPI = {
             console.error('Error fetching group:', error);
             throw error;
         }
+    },
+    async deleteGroup(groupId) {
+        try {
+            const response = await fetch(`/v1/groups/${groupId}`, {
+                method: 'DELETE',
+                headers: authAPI.getAuthHeaders()
+            });
+
+            if (response.status === 403) {
+                alert('You do not have permission to delete this group.');
+                return false;
+            }
+
+            if (!response.ok) {
+                const errorData = await response.text();
+                throw new Error(`Failed to delete group: ${errorData}`);
+            }
+
+            return true;
+        } catch (error) {
+            console.error('Error deleting group:', error);
+            throw error;
+        }
     }
+
 };
