@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import {useNavigate, useParams} from 'react-router-dom';
+import {useParams} from 'react-router-dom';
 import Header from '../components/essentials/Header';
 import TaskDashboard from '../components/taskManagement/TaskDashboard';
 import TaskModal from '../components/taskManagement/TaskModal';
@@ -21,9 +21,7 @@ export default function TaskPage() {
     const { groups } = useContext(GroupsContext);
     const contextGroup = groups.find(g => g.id === gid);
 
-    const group = groups.find(g => g.id === parseInt(groupId, 10));
-    const currentUserId = authAPI.getUserId();
-    const title = group ? `${group.name} tasks:` : 'Tasks:';
+    const currentUserId = Number(authAPI.getUserId());
 
     const [groupName, setGroupName] = useState(contextGroup?.name || '');
     const [tasks, setTasks] = useState([]);
@@ -32,10 +30,11 @@ export default function TaskPage() {
     const [showProfileModal, setShowProfileModal] = useState(false);
     const [currentTask, setCurrentTask] = useState(null);
     const [modalMode, setModalMode] = useState('create');
+
+    const [currentProfileId, setCurrentProfileId] = useState(null);
     const [showNotification, setShowNotification] = useState(false);
     const [notificationText, setNotificationText] = useState("");
 
-    const currentProfileId = 1; // placeholder
 
 
     useEffect(() => {
@@ -74,11 +73,14 @@ export default function TaskPage() {
             try {
                 const fetched = await profilesAPI.fetchProfilesOfGroup(gid);
                 setProfiles(fetched);
+                const userProfile = fetched.find(p => p.userId === currentUserId);
+
+                setCurrentProfileId(userProfile?.id || null);
             } catch (err) {
                 console.error('Error loading profiles:', err);
             }
         })();
-    }, [gid]);
+    }, [gid, currentUserId]);
 
     const handleAddTaskClick = e => {
         e.stopPropagation();

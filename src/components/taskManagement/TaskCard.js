@@ -92,7 +92,7 @@ export default function TaskCard({ task, onEdit, onDelete, profile }) {
                         />
                         {assignedToId && profile ? (
                             <div className="task-card__avatar-tooltip">
-                                <div className="tooltip__name">{profile.username}</div>
+                                {/*<div className="tooltip__name">{profile.username}</div>*/}
                                 <div className="tooltip__date">Assigned: {assignedDate}</div>
                             </div>
                         ) : (

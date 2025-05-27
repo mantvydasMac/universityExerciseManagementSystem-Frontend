@@ -9,6 +9,7 @@ import { authAPI } from '../api/authAPI'
 import { GroupsContext } from '../context/GroupsContext';
 import TimelineView from '../components/timeline/TimelineView';
 import './styles/GroupPage.css';
+import InvitationsPanel from "../components/invitationManagement/Invitations";
 
 export default function GroupPage() {
     const { groups: ctxGroups, setGroups: setCtxGroups } = useContext(GroupsContext);
@@ -19,22 +20,23 @@ export default function GroupPage() {
 
     const currentUserId = authAPI.getUserId();
 
-    useEffect(() => {
-        async function loadGroups() {
-            try {
-                setLoading(true);
-                const fetched = await groupAPI.getUserGroups(currentUserId);
-                setCtxGroups(fetched);
-                setError(null);
-            } catch (err) {
-                console.error('Error loading groups:', err);
-                setError('Failed to load groups');
-            } finally {
-                setLoading(false);
-            }
+    const loadGroups = async () => {
+        try {
+            setLoading(true);
+            const fetched = await groupAPI.getUserGroups(currentUserId);
+            setCtxGroups(fetched);
+            setError(null);
+        } catch (err) {
+            console.error('Error loading groups:', err);
+            setError('Failed to load groups');
+        } finally {
+            setLoading(false);
         }
+    };
+
+    useEffect(() => {
         loadGroups();
-    }, [currentUserId, setCtxGroups]);
+    }, [currentUserId]);
 
     const toggleFabMenu = e => {
         e.stopPropagation();
@@ -59,7 +61,6 @@ export default function GroupPage() {
             setLoading(false);
         }
     };
-
     return (
         <div className="group-page" onClick={closeFabMenu}>
             <Header title="Your groups:" />
@@ -75,6 +76,10 @@ export default function GroupPage() {
                     </>
                 )}
             </main>
+            <InvitationsPanel
+                userId={currentUserId}
+                onAccept={loadGroups}
+            />
             <div className="fab-container" onClick={e => e.stopPropagation()}>
                 <OverflowMenu
                     open={fabOpen}

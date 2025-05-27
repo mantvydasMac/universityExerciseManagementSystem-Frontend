@@ -3,12 +3,14 @@ import { FaUserCircle, FaTimes } from 'react-icons/fa';
 import { profilesAPI } from '../../api/profilesAPI';
 import ProfileUpdateForm from './ProfileUpdateForm';
 import './styles/ProfileModal.css';
+import {authAPI} from "../../api/authAPI";
 
 export default function ProfileModal({ profileId, onClose }) {
-    const currentProfileId = 1; // placeholder
+    const currentUserId = Number(authAPI.getUserId());
     const [profile, setProfile] = useState(null);
     const [isEditMode, setIsEditMode] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
+    const [canEditProfile, setCanEditProfile] = useState(false);
 
     useEffect(() => {
         (async () => {
@@ -20,6 +22,22 @@ export default function ProfileModal({ profileId, onClose }) {
             }
         })();
     }, [profileId]);
+
+    useEffect(() => {
+        const checkIfCanEdit = async () => {
+            try {
+                const profiles = await profilesAPI.fetchProfilesByUser(currentUserId);
+                const canEdit = profiles.some(profile => profile.id === profileId);
+                setCanEditProfile(canEdit);
+            } catch (error) {
+                console.error('Error checking profile edit permissions:', error);
+            }
+        };
+
+        if (currentUserId && profileId) {
+            checkIfCanEdit();
+        }
+    }, [currentUserId, profileId]);
 
     const toggleEditMode = () => setIsEditMode(m => !m);
 
@@ -78,7 +96,7 @@ export default function ProfileModal({ profileId, onClose }) {
                                 </div>
                                 <div className="profile-page__param-label">Role</div>
                                 <div className="profile-page__param-box">{profile.role}</div>
-                                {currentProfileId === profile.id && (
+                                {canEditProfile && (
                                     <button onClick={toggleEditMode} className="profile-page__edit-button">
                                         Edit
                                     </button>

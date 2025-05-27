@@ -38,9 +38,8 @@ export const groupAPI = {
                 method: 'POST',
                 headers: authAPI.getAuthHeaders(),
                 body: JSON.stringify({
-                    name: name,
-                    profileIds: [],
-                    taskIds: []
+                    groupName: name,
+                    creatorId: creatorId,
                 })
             });
 
@@ -49,25 +48,7 @@ export const groupAPI = {
                 throw new Error(`Failed to create group: ${errorData}`);
             }
 
-            const createdGroup = await groupResponse.json();
-
-            const profileResponse = await fetch(`/v1/profiles`, {
-                method: 'POST',
-                headers: authAPI.getAuthHeaders(),
-                body: JSON.stringify({
-                    userId: creatorId,
-                    groupId: createdGroup.id,
-                    role: 'OWNER',
-                    joinedDate: new Date().toISOString(),
-                })
-            });
-
-            if (!profileResponse.ok) {
-                const errorData = await profileResponse.text();
-                throw new Error(`Failed to create profile: ${errorData}`);
-            }
-
-            return createdGroup;
+            return await groupResponse.json();
         } catch (error) {
             console.error('Error in createGroup:', error);
             throw error;
