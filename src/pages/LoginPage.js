@@ -24,15 +24,21 @@ const LoginPage = () => {
             await authAPI.login(loginData);
             navigate('/');
         } catch (err) {
-            setError(err.message || 'LoginPage failed');
+            setError('Invalid credentials');
         }
     };
 
     const handleRegister = async (e) => {
         e.preventDefault();
         try {
-            await authAPI.register(registerData);
             setShowModal(false);
+            await authAPI.register(registerData);
+            setRegisterData({
+                firstName: '',
+                lastName: '',
+                email: '',
+                password: '',
+            });
             setError('');
         } catch (err) {
             setError(err.message || 'Registration failed');
@@ -71,7 +77,15 @@ const LoginPage = () => {
 
             <RegisterModal
                 show={showModal}
-                onClose={() => setShowModal(false)}
+                onClose={() => {
+                    setShowModal(false);
+                    setRegisterData({
+                        firstName: '',
+                        lastName: '',
+                        email: '',
+                        password: '',
+                    });
+                }}
                 registerData={registerData}
                 setRegisterData={setRegisterData}
                 onSubmit={handleRegister}
