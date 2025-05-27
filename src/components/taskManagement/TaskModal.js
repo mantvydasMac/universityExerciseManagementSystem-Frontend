@@ -17,7 +17,8 @@ export default function TaskModal({
     const [deadline, setDeadline] = useState('');
     const [assignedToId, setAssignedToId] = useState(-1);
     // const [status, setStatus] = useState('To Do');
-    const [id, setId] = useState(0)
+    const [id, setId] = useState(0);
+    const [titleError, setTitleError] = useState('');
 
     useEffect(() => {
         if (show) {
@@ -41,7 +42,16 @@ export default function TaskModal({
 
     const handleSubmit = async e => {
         e.preventDefault();
-        if (!title || !assignedToId) return;
+        if (!title.trim()) {
+            setTitleError('Title is required');
+            return;
+        }
+        if (title.length > 50) {
+            setTitleError('Title must be less than 50 characters');
+            return;
+        }
+
+        setTitleError('');
         let shouldClose;
 
         if (mode === 'edit') {
@@ -114,6 +124,7 @@ export default function TaskModal({
                     onChange={e => setTitle(e.target.value)}
                     required
                 />
+                {titleError && <p className="error">{titleError}</p>}
 
                 <label htmlFor={`${fieldPrefix}-desc`}>Description</label>
                 <textarea
@@ -149,21 +160,6 @@ export default function TaskModal({
                     ))}
                 </select>
 
-                {/*{mode === 'edit' && (*/}
-                {/*    <>*/}
-                {/*        <label htmlFor={`${fieldPrefix}-status`}>Status *</label>*/}
-                {/*        <select*/}
-                {/*            id={`${fieldPrefix}-status`}*/}
-                {/*            value={status}*/}
-                {/*            onChange={e => setStatus(e.target.value)}*/}
-                {/*            required*/}
-                {/*        >*/}
-                {/*            <option value="TO_DO">To Do</option>*/}
-                {/*            <option value="IN_PROGRESS">In Progress</option>*/}
-                {/*            <option value="COMPLETED">Completed</option>*/}
-                {/*        </select>*/}
-                {/*    </>*/}
-                {/*)}*/}
             </form>
         </Modal>
     );

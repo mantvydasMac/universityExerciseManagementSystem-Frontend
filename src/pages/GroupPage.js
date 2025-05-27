@@ -86,7 +86,7 @@ export default function GroupPage() {
                     placement="top"
                     items={[
                         { label: 'Create Group', onClick: handleCreateClick },
-                        { label: 'Join Group', onClick: () => setFabOpen(false) }
+                        // { label: 'Join Group', onClick: () => setFabOpen(false) }
                     ]}
                 />
                 <FloatingActionButton ariaLabel="Add group" icon="+" onClick={toggleFabMenu} />
