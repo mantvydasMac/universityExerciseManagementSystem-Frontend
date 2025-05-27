@@ -4,6 +4,7 @@ import './InvitationsPanel.css';
 
 export default function InvitationsPanel({ userId, onAccept }) {
     const [invitations, setInvitations] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         fetchInvitations();
@@ -11,10 +12,13 @@ export default function InvitationsPanel({ userId, onAccept }) {
 
     const fetchInvitations = async () => {
         try {
+            setIsLoading(true);
             const fetched = await invitationAPI.getUserInvitations(userId);
             setInvitations(fetched);
         } catch (err) {
             console.error('Error loading invitations:', err);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -22,7 +26,7 @@ export default function InvitationsPanel({ userId, onAccept }) {
         try {
             await invitationAPI.acceptInvitation(id);
             setInvitations(prev => prev.filter(inv => inv.id !== id));
-            onAccept()
+            onAccept();
         } catch (err) {
             console.error('Error accepting invitation:', err);
         }
@@ -40,24 +44,47 @@ export default function InvitationsPanel({ userId, onAccept }) {
     if (invitations.length === 0) return null;
 
     return (
-        <div className="invitation-table">
-            <p>You received an invite!</p>
-            <table>
-                <tbody>
+        <div className="invitation-panel animate-in">
+            <div className="invitation-header">
+                <h3>New Invitations</h3>
+                <span className="invitation-count">{invitations.length}</span>
+            </div>
+            
+            <div className="invitations-container">
                 {invitations.map(inv => (
-                    <tr key={inv.id}>
-                        <td>{inv.inviterName}</td>
-                        <td>has invited you to join group: </td>
-                        <td>{inv.groupName}</td>
-                        <td>at :{new Date(inv.createdAt).toLocaleDateString()}</td>
-                        <td>
-                            <button onClick={() => handleAccept(inv.id)}>Accept</button>
-                            <button onClick={() => handleDecline(inv.id)}>Decline</button>
-                        </td>
-                    </tr>
+                    <div
+                        key={inv.id}
+                        className="invitation-card animate-in"
+                    >
+                        <div className="invitation-content">
+                            <div className="invitation-info">
+                                <span className="inviter-name">{inv.inviterName}</span>
+                                <span className="invitation-text">invited you to join</span>
+                                <span className="group-name">{inv.groupName}</span>
+                            </div>
+                            <div className="invitation-meta">
+                                <span className="invitation-date">
+                                    {new Date(inv.createdAt).toLocaleDateString()}
+                                </span>
+                            </div>
+                        </div>
+                        <div className="invitation-actions">
+                            <button 
+                                className="accept-button"
+                                onClick={() => handleAccept(inv.id)}
+                            >
+                                Accept
+                            </button>
+                            <button 
+                                className="decline-button"
+                                onClick={() => handleDecline(inv.id)}
+                            >
+                                Decline
+                            </button>
+                        </div>
+                    </div>
                 ))}
-                </tbody>
-            </table>
+            </div>
         </div>
     );
 }

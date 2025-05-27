@@ -1,30 +1,154 @@
-
-.invitation-table {
+.invitation-panel {
     position: fixed;
-    bottom: 1rem;
-    left: 1rem;
+    bottom: 1.5rem;
+    left: 1.5rem;
     background: white;
-    border: 1px solid #ccc;
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    z-index: 10;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    padding: 1.25rem;
+    z-index: 1000;
+    max-width: 400px;
+    width: 100%;
 }
 
-.invitation-table table {
+.invitation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.invitation-header h3 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.invitation-count {
+    background: rgba(44, 62, 80, 0.18);
+    color: #2c3e50;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
     font-size: 0.85rem;
-    border-collapse: collapse;
+    font-weight: 500;
 }
 
-.invitation-table th,
-.invitation-table td {
-    padding: 0.5rem;
-    text-align: left;
+.invitations-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
 }
 
-.invitation-table button {
-    margin-right: 0.5rem;
-    padding: 0.3rem 0.6rem;
-    font-size: 0.8rem;
+.invitation-card {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    border: 1px solid #e9ecef;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    animation: slideInLeft 0.3s ease-out forwards;
+}
+
+.invitation-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.invitation-content {
+    margin-bottom: 1rem;
+}
+
+.invitation-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.inviter-name {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.invitation-text {
+    color: #2c3e50;
+}
+
+.group-name {
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.invitation-meta {
+    font-size: 0.85rem;
+    color: #2c3e50;
+}
+
+.invitation-date {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.invitation-date::before {
+    content: "•";
+    margin-right: 0.25rem;
+}
+
+.invitation-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.accept-button, .decline-button {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
     cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.accept-button {
+    background: #20252d;
+    color: white;
+}
+
+.accept-button:hover {
+    background: #20252d;
+}
+
+.decline-button {
+    background: #f8f9fa;
+    color: #20252d;
+    border: 1px solid #20252d;
+}
+
+.decline-button:hover {
+    background: #20252d;
+    color: white;
+}
+
+@media (max-width: 480px) {
+    .invitation-panel {
+        left: 0.75rem;
+        right: 0.75rem;
+        bottom: 0.75rem;
+        max-width: none;
+    }
+
+    .invitation-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+
+    .invitation-actions {
+        flex-direction: column;
+    }
 }
