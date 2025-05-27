@@ -39,10 +39,10 @@ export default function TaskModal({
         }
     }, [show, task, mode]);
 
-    const handleSubmit = e => {
+    const handleSubmit = async e => {
         e.preventDefault();
-        console.log(!title, !deadline, !assignedToId);
         if (!title || !assignedToId) return;
+        let shouldClose;
 
         if (mode === 'edit') {
 
@@ -51,11 +51,12 @@ export default function TaskModal({
                 title,
                 description,
                 deadline: deadline === "" ? null : deadline,
-                assignedToId: assignedToId === -1 ? null : assignedToId
+                assignedToId: assignedToId === -1 ? null : assignedToId,
+                version: task.version
                 // status
             };
             console.log(updated);
-            onSubmit(updated);
+            shouldClose = await onSubmit(updated);
         } else {
             const newTask = {
                 title,
@@ -66,9 +67,11 @@ export default function TaskModal({
                 createdById
             };
             console.log(newTask);
-            onSubmit(newTask);
+            shouldClose = await onSubmit(newTask);
         }
-        onClose();
+        if (shouldClose) {
+            onClose();
+        }
     };
 
     const footer = (

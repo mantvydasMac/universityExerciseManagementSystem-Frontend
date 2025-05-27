@@ -20,19 +20,24 @@ export const taskAPI = {
 
     async updateTask(task) {
         try {
-
             const response = await fetch(`/v1/tasks`, {
                 method: 'PUT',
                 headers: authAPI.getAuthHeaders(),
-                body: JSON.stringify(task)
+                body: JSON.stringify(task),
             });
+
+            if (response.status === 409) {
+                // Optimistic locking conflict
+                return { conflict: true };
+            }
 
             if (!response.ok) {
                 const errorData = await response.text();
                 throw new Error(`Failed to update task: ${errorData}`);
             }
 
-            return await response.json();
+            const updatedTask = await response.json();
+            return { conflict: false, data: updatedTask };
 
         } catch (error) {
             console.error('Error updating task:', error);
