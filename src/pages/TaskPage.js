@@ -139,7 +139,7 @@ export default function TaskPage() {
 
     return (
         <div className="task-page" onClick={() => showModal && handleCloseModal()}>
-            <Header title={`${groupName} tasks:`} />
+            <Header title={`${groupName} tasks:`} showBackLink />
             <main className="task-page__main">
                 <TaskDashboard tasks={tasks}
                                profiles={profiles}
@@ -151,11 +151,11 @@ export default function TaskPage() {
                 />
             </main>
             <div className="fab-container" onClick={e => e.stopPropagation()}>
-                <FloatingActionButton ariaLabel="Add task" icon="+" onClick={handleAddTaskClick} />
+                <FloatingActionButton ariaLabel="Add task" icon="+" onClick={handleAddTaskClick}/>
                 <FloatingActionButton
                     className="task-page__profile-fab"
                     ariaLabel="View profile"
-                    icon={<FaUserCircle />}
+                    icon={<FaUserCircle/>}
                     onClick={handleOpenProfile}
                 />
             </div>
@@ -174,7 +174,7 @@ export default function TaskPage() {
             )}
 
             {showProfileModal && (
-                <ProfileModal profileId={currentProfileId} onClose={handleCloseProfile} />
+                <ProfileModal profileId={currentProfileId} onClose={handleCloseProfile}/>
             )}
 
             <Notification visible={showNotification} text={notificationText}/>
