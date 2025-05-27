@@ -12,6 +12,7 @@ import { GroupsContext } from '../context/GroupsContext';
 import { FaUserCircle } from 'react-icons/fa';
 import './styles/TaskPage.css';
 import {authAPI} from "../api/authAPI";
+import Notification from "../components/essentials/Notification";
 
 export default function TaskPage() {
     const { groupId } = useParams();
@@ -31,6 +32,8 @@ export default function TaskPage() {
     const [showProfileModal, setShowProfileModal] = useState(false);
     const [currentTask, setCurrentTask] = useState(null);
     const [modalMode, setModalMode] = useState('create');
+    const [showNotification, setShowNotification] = useState(false);
+    const [notificationText, setNotificationText] = useState("");
 
     const currentProfileId = 1; // placeholder
 
@@ -52,15 +55,18 @@ export default function TaskPage() {
 
     useEffect(() => {
         if (!gid) return;
-        (async () => {
-            try {
-                const fetched = await taskAPI.fetchTasksOfGroup(gid);
-                setTasks(fetched);
-            } catch (err) {
-                console.error('Error loading tasks:', err);
-            }
-        })();
+        fetchTasks();
     }, [gid]);
+
+    const fetchTasks = async () => {
+        try {
+            const fetched = await taskAPI.fetchTasksOfGroup(gid);
+            setTasks(fetched);
+            return fetched;
+        } catch (err) {
+            console.error('Error loading tasks:', err);
+        }
+    }
 
     useEffect(() => {
         if (!gid) return;
@@ -91,14 +97,28 @@ export default function TaskPage() {
     };
     const handleSubmitTask = async data => {
         if (modalMode === 'edit') {
-            const updated = await taskAPI.updateTask(data);
-            setTasks(ts => ts.map(t => (t.id === updated.id ? updated : t)));
+            const result = await taskAPI.updateTask(data);
+
+            if(result.conflict) {
+                const newTasks = await fetchTasks(gid);
+                setCurrentTask(newTasks.find(t => t.id === currentTask.id));
+                flashNotification("The task has already been updated.");
+
+                return false;
+            } else {
+                const updated = result.data;
+                updateTasksWithNewTask(updated);
+            }
         } else {
             const createdTask = await taskAPI.createTask(data);
             setTasks(prev => [...prev, createdTask]);
         }
-        setShowModal(false);
+        return true;
     };
+
+    const updateTasksWithNewTask = (task) => {
+        setTasks(ts => ts.map(t => (t.id === task.id ? task : t)));
+    }
 
     const handleOpenProfile = e => {
         e.stopPropagation();
@@ -109,11 +129,23 @@ export default function TaskPage() {
         setShowProfileModal(false);
     };
 
+    const flashNotification = (text, duration = 3000) => {
+        setNotificationText(text)
+        setShowNotification(true);
+        setTimeout(() => setShowNotification(false), duration);
+    };
+
     return (
         <div className="task-page" onClick={() => showModal && handleCloseModal()}>
             <Header title={`${groupName} tasks:`} />
             <main className="task-page__main">
-                <TaskDashboard tasks={tasks} profiles={profiles} onEdit={handleEditTask} />
+                <TaskDashboard tasks={tasks}
+                               profiles={profiles}
+                               onEdit={handleEditTask}
+                               fetchTasks={fetchTasks}
+                               flashNotification={flashNotification}
+                               updateTasksWithNewTask={updateTasksWithNewTask}
+                />
             </main>
             <div className="fab-container" onClick={e => e.stopPropagation()}>
                 <FloatingActionButton ariaLabel="Add task" icon="+" onClick={handleAddTaskClick} />
@@ -141,6 +173,8 @@ export default function TaskPage() {
             {showProfileModal && (
                 <ProfileModal profileId={currentProfileId} onClose={handleCloseProfile} />
             )}
+
+            <Notification visible={showNotification} text={notificationText}/>
         </div>
     );
 }
