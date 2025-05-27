@@ -11,7 +11,6 @@ export const authAPI = {
             if (!response.ok) {
                 throw new Error('Registration failed');
             }
-            return await response.json();
         } catch (error) {
             console.error('Error during registration:', error);
             throw error;
@@ -32,14 +31,14 @@ export const authAPI = {
             }
             const data = await response.json();
             if (data.token) {
-                sessionStorage.setItem('token', data.token);
+                localStorage.setItem('token', data.token);
             }
             if (data.userId) {
-                sessionStorage.setItem('userId', data.userId);
+                localStorage.setItem('userId', data.userId);
             }
-            sessionStorage.setItem('firstName', data.firstName);
-            sessionStorage.setItem('lastName', data.lastName);
-            sessionStorage.setItem('email', data.email);
+            localStorage.setItem('firstName', data.firstName);
+            localStorage.setItem('lastName', data.lastName);
+            localStorage.setItem('email', data.email);
             return data;
         } catch (error) {
             console.error('Error during login:', error);
@@ -48,31 +47,31 @@ export const authAPI = {
     },
 
     logout() {
-        sessionStorage.removeItem('token');
-        sessionStorage.removeItem('userId');
-        sessionStorage.removeItem('firstName');
-        sessionStorage.removeItem('lastName');
-        sessionStorage.removeItem('email');
+        localStorage.removeItem('token');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('firstName');
+        localStorage.removeItem('lastName');
+        localStorage.removeItem('email');
     },
 
     getToken() {
-        return sessionStorage.getItem('token');
+        return localStorage.getItem('token');
     },
 
     getUserId() {
-        return Number(sessionStorage.getItem('userId'));
+        return localStorage.getItem('userId');
     },
 
     getFirstName() {
-        return sessionStorage.getItem('firstName');
+        return localStorage.getItem('firstName');
     },
 
     getLastName() {
-        return sessionStorage.getItem('lastName');
+        return localStorage.getItem('lastName');
     },
 
     getEmail() {
-        return sessionStorage.getItem('email');
+        return localStorage.getItem('email');
     },
 
     async changePassword(oldPassword, newPassword) {
@@ -89,7 +88,6 @@ export const authAPI = {
             if (!response.ok) {
                 throw new Error('Failed to change password');
             }
-            // return await response.json();
         } catch (error) {
             console.error('Error changing password:', error);
             throw error;
