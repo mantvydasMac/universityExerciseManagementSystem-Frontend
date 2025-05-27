@@ -3,7 +3,7 @@ import { FaUserCircle } from 'react-icons/fa';
 import { profilesAPI } from '../../api/profilesAPI';
 import './styles/CommentDashboard.css';
 
-export default function CommentDashboard({ comments }) {
+export default function CommentDashboard({ comments, currentProfileId }) {
     const [profiles, setProfiles] = useState({});
 
     useEffect(() => {
@@ -38,6 +38,10 @@ export default function CommentDashboard({ comments }) {
         });
     };
 
+    useEffect(() => {
+        console.log('Incoming comments:', comments);
+    }, [comments]);
+
     if (!comments || comments.length === 0) {
         return (
             <div className="comment-dashboard comment-dashboard--empty">
@@ -49,7 +53,7 @@ export default function CommentDashboard({ comments }) {
     return (
         <div className="comment-dashboard">
             {comments.map((comment, i) => {
-                const isMe = comment.profileId === 1;
+                const isMe = comment.profileId === currentProfileId;
                 const profile = profiles[comment.profileId];
                 const name = profile ? profile.username : 'Loading…';
 

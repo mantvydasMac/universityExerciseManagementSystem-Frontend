@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import { FaUserCircle, FaEllipsisV, FaCommentAlt } from 'react-icons/fa';
 import OverflowMenu from '../essentials/OverflowMenu';
 import CommentModal from './CommentModal';
@@ -6,7 +6,7 @@ import ProfileModal from '../profileManagement/ProfileModal';
 import { taskAPI } from '../../api/taskAPI';
 import './styles/TaskCard.css';
 
-export default function TaskCard({ task, onEdit, onDelete, profile }) {
+export default function TaskCard({ task, onEdit, onDelete, profile, currentProfileId }) {
     const { isLate, isDue, status, assignedToId, assignedDate } = task;
     const lateClass      = isLate      ? ' task-card--late'      : '';
     const dueClass       = isDue       ? ' task-card--due'       : '';
@@ -92,7 +92,7 @@ export default function TaskCard({ task, onEdit, onDelete, profile }) {
                         />
                         {assignedToId && profile ? (
                             <div className="task-card__avatar-tooltip">
-                                {/*<div className="tooltip__name">{profile.username}</div>*/}
+                                <div className="tooltip__name">{profile.username}</div>
                                 <div className="tooltip__date">Assigned: {assignedDate}</div>
                             </div>
                         ) : (
@@ -128,7 +128,7 @@ export default function TaskCard({ task, onEdit, onDelete, profile }) {
                 onClose={() => setShowCommentModal(false)}
                 taskId={task.id}
                 task={task}
-                profile={profile}
+                currentProfileId={currentProfileId}
             />
 
             {showProfileModal && assignedToId != null && (

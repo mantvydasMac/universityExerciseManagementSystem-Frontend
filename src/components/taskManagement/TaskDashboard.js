@@ -3,7 +3,7 @@ import TaskCard from './TaskCard';
 import './styles/TaskDashboard.css';
 import {taskAPI} from "../../api/taskAPI";
 
-export default function TaskDashboard({ tasks, profiles, onEdit, fetchTasks, flashNotification, updateTasksWithNewTask }) {
+export default function TaskDashboard({ tasks, profiles, onEdit, fetchTasks, flashNotification, updateTasksWithNewTask, currentProfileId }) {
     const [taskList, setTaskList] = useState(tasks);
     const [isDragging, setIsDragging] = useState(false);
 
@@ -123,7 +123,8 @@ export default function TaskDashboard({ tasks, profiles, onEdit, fetchTasks, fla
                             task={task}
                             profile={profiles.find(p => p.id === task.assignedToId)}
                             onEdit={onEdit}
-                            onDelete={handleDelete}    // pass delete callback
+                            onDelete={handleDelete}
+                            currentProfileId={currentProfileId}
                         />                    ))}
                     {col.items.length === 0 && (
                         <p className="task-dashboard__empty">No tasks here</p>

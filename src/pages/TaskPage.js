@@ -147,6 +147,7 @@ export default function TaskPage() {
                                fetchTasks={fetchTasks}
                                flashNotification={flashNotification}
                                updateTasksWithNewTask={updateTasksWithNewTask}
+                               currentProfileId={currentProfileId}
                 />
             </main>
             <div className="fab-container" onClick={e => e.stopPropagation()}>

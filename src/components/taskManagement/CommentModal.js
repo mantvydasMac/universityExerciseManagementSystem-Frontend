@@ -4,7 +4,7 @@ import CommentDashboard from './CommentDashboard';
 import { commentAPI } from '../../api/commentAPI';
 import './styles/CommentModal.css';
 
-export default function CommentModal({ show, onClose, taskId, onSubmit, task, profile }) {
+export default function CommentModal({ show, onClose, taskId, onSubmit, task, currentProfileId }) {
     const [comment, setComment] = useState('');
     const [comments, setComments] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -46,12 +46,13 @@ export default function CommentModal({ show, onClose, taskId, onSubmit, task, pr
             const newCommentDto = {
                 content: trimmed,
                 taskId: taskId,
-                profileId: profile.id,
+                profileId: currentProfileId,
             };
-            const created = await commentAPI.createComment(newCommentDto);
-            setComments(prev => [...prev, created]);
+            await commentAPI.createComment(newCommentDto);
+            const updatedComments = await commentAPI.fetchCommentsOfTask(taskId);
+            setComments(updatedComments);
             setComment('');
-            if (onSubmit) onSubmit(created);
+            if (onSubmit) onSubmit();
         } catch (err) {
             console.error('Error creating comment:', err);
             setSubmitError('Failed to add comment');
@@ -108,7 +109,7 @@ export default function CommentModal({ show, onClose, taskId, onSubmit, task, pr
                 ) : error ? (
                     <div className="error-message">{error}</div>
                 ) : (
-                    <CommentDashboard comments={comments} />
+                    <CommentDashboard comments={comments} currentProfileId={currentProfileId} />
                 )}
 
                 <div className="comment-form">
