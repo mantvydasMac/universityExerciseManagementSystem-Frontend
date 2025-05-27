@@ -39,13 +39,15 @@ export default function ProfileModal({ profileId, onClose }) {
         }
     }, [currentUserId, profileId]);
 
-    const toggleEditMode = () => setIsEditMode(m => !m);
+    const toggleEditMode = () => {
+        setIsEditMode(m => !m);
+        console.log(profile);
+    }
 
     const handleSubmit = async updatedProfile => {
         try {
             const saved = await profilesAPI.updateProfile(updatedProfile);
             setProfile(saved);
-            setIsEditMode(false);
         } catch (err) {
             console.error('Error updating profile:', err);
         }
@@ -95,7 +97,7 @@ export default function ProfileModal({ profileId, onClose }) {
                                     {profile.description}
                                 </div>
                                 <div className="profile-page__param-label">Role</div>
-                                <div className="profile-page__param-box">{profile.role}</div>
+                                <div className="profile-page__param-box">{profile.profileRole}</div>
                                 {canEditProfile && (
                                     <button onClick={toggleEditMode} className="profile-page__edit-button">
                                         Edit

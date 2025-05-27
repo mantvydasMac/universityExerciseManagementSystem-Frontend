@@ -12,7 +12,6 @@ export default function ProfileUpdateForm({profile, toggleEditMode, onSubmit}) {
 
     const [usernameError, setUsernameError] = useState(false);
     const [descriptionError, setDescriptionError] = useState(false);
-    const [roleError, setRoleError] = useState(false);
     const [errorText, setErrorText] = useState('');
 
     useEffect(() => {
@@ -30,7 +29,6 @@ export default function ProfileUpdateForm({profile, toggleEditMode, onSubmit}) {
         setErrorText('');
         setUsernameError(false);
         setDescriptionError(false);
-        setRoleError(false);
         if (username.length === 0) {
             setErrorText("Username cannot be empty!");
             setUsernameError(true);
@@ -49,18 +47,11 @@ export default function ProfileUpdateForm({profile, toggleEditMode, onSubmit}) {
 
             return;
         }
-        if (role.length >= 255) {
-            setErrorText("Role cannot be more than 255 symbols!");
-            setRoleError(true);
-
-            return;
-        }
 
         const updatedProfile = {
             id,
             username,
-            description,
-            role
+            description
         }
 
         console.log(updatedProfile);
@@ -94,14 +85,8 @@ export default function ProfileUpdateForm({profile, toggleEditMode, onSubmit}) {
                     onChange={e => setDescription(e.target.value)}
                 />
 
-                <label className="profile-update-form__input-label" htmlFor={`edit-role`}>Role</label>
-                <input
-                    className={"profile-update-form__input-box " + (roleError ? "input-box-error" : "")}
-                    id={'edit-role'}
-                    type="text"
-                    value={role}
-                    onChange={e => setRole(e.target.value)}
-                />
+                <div className="profile-page__param-label">Role</div>
+                <div className="profile-page__param-box">{profile.profileRole}</div>
             </form>
 
             <div className="profile-update-form__error-div">{errorText}</div>
